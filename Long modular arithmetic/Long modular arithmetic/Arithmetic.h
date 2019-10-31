@@ -12,6 +12,7 @@ private:
 
 	void removeZeros();
 	void shiftRight();
+	friend Arithmetic intaddition(Arithmetic number1, Arithmetic number2);
 	friend Arithmetic intdivide(Arithmetic number1, Arithmetic number2);
 	friend Arithmetic intmultiply(Arithmetic number1, Arithmetic number2);
 public:
@@ -21,10 +22,10 @@ public:
 	//have access to private variables
 	friend std::ostream& operator <<(std::ostream& stream, Arithmetic& number);
 	friend bool operator ==(Arithmetic& number1, Arithmetic& number2);
-	
+
 	//friend Arithmetic multiply(Arithmetic number1, Arithmetic number2, int module);
 	//friend bool operator <(Arithmetic& number1, Arithmetic& number2);
-	
+
 };
 
 

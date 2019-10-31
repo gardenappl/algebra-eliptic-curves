@@ -49,7 +49,7 @@ Arithmetic intdivide(Arithmetic number1, Arithmetic number2)
 	quotient.x.resize(n - t);
 	for (int j = 0; j < (n - t); j++) quotient.x[j] = 0;
 	//cannot divide by zero
-	//if (number2.x.size() == 1 && number2.x[0] == 0) 
+	//if (number2.x.size() == 1 && number2.x[0] == 0)
 	for (int i = n - 1; i >= 0; --i) {
 		current.shiftRight();
 		current.x[0] = number1.x[i];
@@ -83,7 +83,7 @@ bool operator==(Arithmetic& number1, Arithmetic& number2)
 
 //Arithmetic multiply(Arithmetic number1, Arithmetic number2, int module)
 //{
-//	
+//
 //}
 
 Arithmetic intmultiply(Arithmetic number1, Arithmetic number2)
@@ -112,22 +112,54 @@ Arithmetic intmultiply(Arithmetic number1, Arithmetic number2)
 	return result;
 }
 
+Arithmetic intaddition(Arithmetic number1, Arithmetic number2)
+{
+    Arithmetic result;
+    int n1 = number1.x.size();
+    int n2 = number2.x.size();
+    int size = n1 + 1;
+	result.x.resize(size);
 
+    if (n1 > n2) {
+        int siz = n1;
+        number2.x.resize(siz);
+        for (int i = n1-1; i >= 0; i--) {
+            if (n2 != 0) {
+                number2.x[i] = number2.x[n2 - 1];
+                n2--;
+            }
+            else {
+            number2.x[i] = 0;
+        }
+    }
+    }
+    int c = 0;
+    for (int i = 0; i < n1; i++) {
+        int sum = number1.x[i] + number2.x[i] + c;
+        result.x[i] = sum%10;//for b!=10 it will be mod b
+        if ((number1.x[i] + number2.x[i] + c) < 10) c = 0;
+        else c = 1;
+    }
+    result.x[n1 + 1] = c;
+    result.removeZeros();
+    return result;
+
+}
 
 
 //bool operator<(Arithmetic& number1, Arithmetic& number2)
 //{
 //	if (number1 == number2) return false;
 //
-//	if (number1.isNegative && !number2.isNegative) 
+//	if (number1.isNegative && !number2.isNegative)
 //		return true;
-//	
-//	if (!number1.isNegative && number2.isNegative) 
+//
+//	if (!number1.isNegative && number2.isNegative)
 //		return false;
-//	
+//
 //	if (number1.isNegative && number2.isNegative) return number2 < number1;
 //
-//	
+//
 //	for (int i = number1.x.size() - 1; i >= 0; --i) {
 //		if (number1.x[i] != number2.x[i]) return
 //
