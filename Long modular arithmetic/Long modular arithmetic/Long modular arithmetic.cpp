@@ -7,8 +7,9 @@ using namespace std;
 
 int main()
 {
-	//Arithmetic x("242", 100);
-	//Arithmetic y("2", 100);
-	//Arithmetic result = intmultiply(x, y);
-	//cout << result;
+	Arithmetic x("23", 100);
+	Arithmetic y("1234", 100);
+	Arithmetic result = intmultiply(x, y);
+
+	cout << result;
 }

@@ -8,7 +8,7 @@ void Arithmetic::removeZeros()
 
 void Arithmetic::shiftRight()
 {
-	if (x.size == 0) {
+	if (x.size() == 0) {
 		x.push_back(0);
 		return;
 	}
@@ -37,31 +37,32 @@ Arithmetic::Arithmetic()
 }
 
 //returning remainder - not ready
-Arithmetic intdivide(Arithmetic number1, Arithmetic number2)
-{
-	int n = number1.x.size();
-	int t = number2.x.size();
-	Arithmetic result, current;
-	Arithmetic quotient;
-	int x = 0;
-	int l = 0;
-
-	quotient.x.resize(n - t);
-	for (int j = 0; j < (n - t); j++) quotient.x[j] = 0;
-	//cannot divide by zero
-	//if (number2.x.size() == 1 && number2.x[0] == 0)
-	for (int i = n - 1; i >= 0; --i) {
-		current.shiftRight();
-		current.x[0] = number1.x[i];
-		current.removeZeros();
-		x = 0;
-		l = 0;
-		while (l <= 10) {
-			int m = (l + 10) / 2;
-
-		}
-	}
-}
+//Arithmetic intdivide(Arithmetic number1, Arithmetic number2)
+//{
+//	int n = number1.x.size();
+//	int t = number2.x.size();
+//	Arithmetic result, current;
+//	Arithmetic quotient;
+//	int x = 0;
+//	int l = 0;
+//
+//	quotient.x.resize(n - t);
+//	for (int j = 0; j < (n - t); j++) quotient.x[j] = 0;
+//	//cannot divide by zero
+//	//if (number2.x.size() == 1 && number2.x[0] == 0)
+//	for (int i = n - 1; i >= 0; --i) {
+//		current.shiftRight();
+//		current.x[0] = number1.x[i];
+//		current.removeZeros();
+//		x = 0;
+//		l = 0;
+//		while (l <= 10) {
+//			int m = (l + 10) / 2;
+//
+//		}
+//	}
+//
+//}
 
 std::ostream& operator<<(std::ostream& stream, Arithmetic& number)
 {
@@ -93,21 +94,26 @@ Arithmetic intmultiply(Arithmetic number1, Arithmetic number2)
 	int t = number2.x.size();
 	int size = n + t + 1;
 	result.x.resize(size);
-	for (int i = 0; i < size; i++) result.x[i] = 0;
 	int c = 0;
-
 	if (number1.isNegative && !number2.isNegative) result.isNegative = true;
 	if (number2.isNegative && !number1.isNegative) result.isNegative = true;
 
-	for (int i = 0; i < t; i++) {
+	int shift = 0;
+	int shift_iterator = 0;
+
+	for (int i = number1.x.size() - 1; i >= 0; i--) {
 		c = 0;
-		for (int j = 0; j < n; j++) {
-			int current = result.x[i + j] + number2.x[i] * number1.x[j] + c;
-			result.x[i + j] = current % 10;
-			c = (int)current / 10;
+		shift_iterator = 0;
+		for (int j = number2.x.size() - 1; j >=0; j--) {
+			int current = result.x[shift + shift_iterator] + number2.x[j] * number1.x[i] + c;
+			result.x[shift + shift_iterator] = current % 10;
+			c = current / 10;
+			shift_iterator++;
 		}
-		result.x[i + n + 1] = c;
+		result.x[shift + shift_iterator] = c;
+		shift++;
 	}
+
 	result.removeZeros();
 	return result;
 }
@@ -136,7 +142,7 @@ Arithmetic intaddition(Arithmetic number1, Arithmetic number2)
     int c = 0;
     for (int i = 0; i < n1; i++) {
         int sum = number1.x[i] + number2.x[i] + c;
-        result.x[i] = sum%10;//for b!=10 it will be mod b
+        result.x[i] = sum % 10;//for b!=10 it will be mod b
         if ((number1.x[i] + number2.x[i] + c) < 10) c = 0;
         else c = 1;
     }
