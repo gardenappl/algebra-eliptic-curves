@@ -8,7 +8,7 @@ class Arithmetic
 private:
 	std::vector<int> x;
 	bool isNegative;
-	int m;
+	std::vector<int> m;
 
 	void removeZeros();
 	void shiftRight();
@@ -16,7 +16,7 @@ private:
 	friend Arithmetic intdivide(Arithmetic number1, Arithmetic number2);
 	friend Arithmetic intmultiply(Arithmetic number1, Arithmetic number2);
 public:
-	Arithmetic(std::string str, int m);
+	Arithmetic(std::string str, std::string m);
 	Arithmetic();
 	bool ifNegative() { return isNegative; }
 	//have access to private variables

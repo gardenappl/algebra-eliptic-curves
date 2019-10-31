@@ -17,7 +17,7 @@ void Arithmetic::shiftRight()
 	x[0] = 0;
 }
 
-Arithmetic::Arithmetic(std::string str, int m)
+Arithmetic::Arithmetic(std::string str, std::string m)
 {
 	if (str[0] == '-') {
 		isNegative = true;
@@ -25,16 +25,21 @@ Arithmetic::Arithmetic(std::string str, int m)
 	else isNegative = false;
 	x.resize(str.length());
 	for (int i = 0; i < str.length(); i++) {
-		x[i] = str[i] - '0';
+		x[i] = str[i] - '0';	
 	}
-	this->m = m;
+
+	this->m.resize(m.length());
+	for (int i = 0; i < m.length(); i++) {
+		this->m[i] = m[i] - '0';
+	}
 }
 
 Arithmetic::Arithmetic()
 {
-	this->m = 0;
-	this->isNegative = false;
+	isNegative = false;
 }
+
+
 
 //returning remainder - not ready
 //Arithmetic intdivide(Arithmetic number1, Arithmetic number2)
@@ -44,10 +49,10 @@ Arithmetic::Arithmetic()
 //	Arithmetic result, current;
 //	Arithmetic quotient;
 //	int x = 0;
-//	int l = 0;
-//
+//	int left = 0;
+//	int right = 10;
 //	quotient.x.resize(n - t);
-//	for (int j = 0; j < (n - t); j++) quotient.x[j] = 0;
+//	result.x.resize(n);
 //	//cannot divide by zero
 //	//if (number2.x.size() == 1 && number2.x[0] == 0)
 //	for (int i = n - 1; i >= 0; --i) {
@@ -55,11 +60,19 @@ Arithmetic::Arithmetic()
 //		current.x[0] = number1.x[i];
 //		current.removeZeros();
 //		x = 0;
-//		l = 0;
-//		while (l <= 10) {
-//			int m = (l + 10) / 2;
-//
+//		left = 0;
+//		right = 10;
+//		while (left <= right) {
+//			int m = (left + 10) / 2;
+//			Arithmetic t = intmultiply(number1, number1.m);
+//			if (t <= current) {
+//				x = m;
+//				l = m + 1;
+//			}
+//			else right = m - 1;
 //		}
+//		result.x[i] = x;
+//		current = current - intmultiply();
 //	}
 //
 //}
@@ -84,7 +97,7 @@ bool operator==(Arithmetic& number1, Arithmetic& number2)
 
 //Arithmetic multiply(Arithmetic number1, Arithmetic number2, int module)
 //{
-//
+//	
 //}
 
 Arithmetic intmultiply(Arithmetic number1, Arithmetic number2)
