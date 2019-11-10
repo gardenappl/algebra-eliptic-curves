@@ -1,4 +1,7 @@
 #include "Arithmetic.h"
+#include <string>
+
+const int BASE = 10;
 
 void LongModInt::removeZeros()
 {
@@ -34,6 +37,13 @@ LongModInt::LongModInt(std::string str, std::string m)
 	}
 }
 
+LongModInt::LongModInt(int number, int m)
+{
+	std::string str = std::to_string(number);
+	std::string module = std::to_string(m);
+	LongModInt(str, module);
+}
+
 LongModInt::LongModInt(bool isInfinite)
 {
 	this->isInfinite = isInfinite;
@@ -45,15 +55,14 @@ LongModInt::LongModInt()
 	isNegative = false;
 }
 
-
-
+//
 //returning remainder - not ready
-//Arithmetic intdivide(Arithmetic number1, Arithmetic number2)
+//LongModInt intdivide(LongModInt number1, LongModInt number2)
 //{
 //	int n = number1.x.size();
 //	int t = number2.x.size();
-//	Arithmetic result, current;
-//	Arithmetic quotient;
+//	LongModInt result, current;
+//	LongModInt quotient;
 //	int x = 0;
 //	int left = 0;
 //	int right = 10;
@@ -61,19 +70,19 @@ LongModInt::LongModInt()
 //	result.x.resize(n);
 //	//cannot divide by zero
 //	//if (number2.x.size() == 1 && number2.x[0] == 0)
-//	for (int i = n - 1; i >= 0; --i) {
+//	for (long i = n - 1; i >= 0; --i) {
 //		current.shiftRight();
 //		current.x[0] = number1.x[i];
 //		current.removeZeros();
 //		x = 0;
 //		left = 0;
-//		right = 10;
+//		right = BASE;
 //		while (left <= right) {
-//			int m = (left + 10) / 2;
-//			Arithmetic t = intmultiply(number1, number1.m);
+//			int m = (left + right) / 2;
+//			LongModInt t = intmultiply(number2, LongModInt(m, 0));
 //			if (t <= current) {
 //				x = m;
-//				l = m + 1;
+//				left = m + 1;
 //			}
 //			else right = m - 1;
 //		}
@@ -83,7 +92,7 @@ LongModInt::LongModInt()
 //
 //}
 
-std::ostream& operator<<(std::ostream& stream, LongModInt& number)
+std::ostream& operator<<(std::ostream& stream, const LongModInt& number)
 {
 	if (number.isNegative) stream << '-';
 	for (int i = 0; i < number.x.size(); i++) {
@@ -92,7 +101,13 @@ std::ostream& operator<<(std::ostream& stream, LongModInt& number)
 	return stream;
 }
 
-bool operator==(LongModInt& number1, LongModInt& number2)
+bool operator<(const LongModInt& number1, const LongModInt& number2)
+{
+	if (number1 == number2) return false;
+	
+}
+
+bool operator==(const LongModInt& number1, const LongModInt& number2)
 {
 	if (number1.isNegative != number2.isNegative) return false;
 	if (number1.x.size() != number2.x.size()) return false;
