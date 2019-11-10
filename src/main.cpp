@@ -7,11 +7,11 @@ using namespace std;
 
 int main()
 {
-	Arithmetic x("23", "100");
-	Arithmetic y("1234", "100");
-	Arithmetic result = intmultiply(x, y);
+	LongModInt x("23", "100");
+	LongModInt y("1234", "100");
+	LongModInt result = intmultiply(x, y);
 
 	cout << result << std::endl;
-	Arithmetic result2 = intaddition(x, y);
+	LongModInt result2 = intaddition(x, y);
 	cout << result2 << std::endl;
 }

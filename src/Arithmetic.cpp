@@ -1,12 +1,12 @@
 #include "Arithmetic.h"
 
-void Arithmetic::removeZeros()
+void LongModInt::removeZeros()
 {
 	while ((x.size() > 1) && (this->x.back() == 0)) x.pop_back();
 	if (x.size() == 1 && x[0] == 0) isNegative = false;
 }
 
-void Arithmetic::shiftRight()
+void LongModInt::shiftRight()
 {
 	if (x.size() == 0) {
 		x.push_back(0);
@@ -17,7 +17,7 @@ void Arithmetic::shiftRight()
 	x[0] = 0;
 }
 
-Arithmetic::Arithmetic(std::string str, std::string m)
+LongModInt::LongModInt(std::string str, std::string m)
 {
 	if (str[0] == '-') {
 		isNegative = true;
@@ -34,7 +34,13 @@ Arithmetic::Arithmetic(std::string str, std::string m)
 	}
 }
 
-Arithmetic::Arithmetic()
+LongModInt::LongModInt(bool isInfinite)
+{
+	this->isInfinite = isInfinite;
+	LongModInt();
+}
+
+LongModInt::LongModInt()
 {
 	isNegative = false;
 }
@@ -77,7 +83,7 @@ Arithmetic::Arithmetic()
 //
 //}
 
-std::ostream& operator<<(std::ostream& stream, Arithmetic& number)
+std::ostream& operator<<(std::ostream& stream, LongModInt& number)
 {
 	if (number.isNegative) stream << '-';
 	for (int i = 0; i < number.x.size(); i++) {
@@ -86,7 +92,7 @@ std::ostream& operator<<(std::ostream& stream, Arithmetic& number)
 	return stream;
 }
 
-bool operator==(Arithmetic& number1, Arithmetic& number2)
+bool operator==(LongModInt& number1, LongModInt& number2)
 {
 	if (number1.isNegative != number2.isNegative) return false;
 	if (number1.x.size() != number2.x.size()) return false;
@@ -100,9 +106,9 @@ bool operator==(Arithmetic& number1, Arithmetic& number2)
 //	
 //}
 
-Arithmetic intmultiply(Arithmetic number1, Arithmetic number2)
+LongModInt intmultiply(LongModInt number1, LongModInt number2)
 {
-	Arithmetic result;
+	LongModInt result;
 	int n = number1.x.size();
 	int t = number2.x.size();
 	int size = n + t + 1;
@@ -131,9 +137,9 @@ Arithmetic intmultiply(Arithmetic number1, Arithmetic number2)
 	return result;
 }
 
-Arithmetic intaddition(Arithmetic number1, Arithmetic number2)
+LongModInt intaddition(LongModInt number1, LongModInt number2)
 {
-    Arithmetic result;
+    LongModInt result;
     int n1 = number1.x.size();
     int n2 = number2.x.size();
     int size = n1 + 1;
