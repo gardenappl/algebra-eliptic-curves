@@ -2,7 +2,10 @@
 //
 
 #include <iostream>
+#include <cmath>
 #include "Arithmetic.h"
+#include "EllipticCurve.h"
+
 using namespace std;
 
 int main()
@@ -14,4 +17,8 @@ int main()
 	cout << result << std::endl;
 	LongModInt result2 = intaddition(x, y);
 	cout << result2 << std::endl;
+
+	EllipticCurve e(-25, 0);
+	cout << e.add(Point(0, 0), Point(-5, 0)) << endl;
+	cout << e.add(Point(0, 0), Point(0, 0)) << endl;
 }
