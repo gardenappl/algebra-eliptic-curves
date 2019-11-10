@@ -5,7 +5,7 @@ include_directories("${CMAKE_BINARY_DIR}/src")
 set(PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 
 file(GLOB SOURCES
-		"${PROJECT_SOURCE_DIR}/*.cpp"
+		"${PROJECT_SOURCE_DIR}/*.cpp",
 		"${PROJECT_SOURCE_DIR}/main.cpp")
 
 add_executable(algebra-elliptic-curves ${SOURCES})

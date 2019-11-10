@@ -4,7 +4,6 @@ CMakeCache.txt
 Makefile
 cmake-build-debug/
 cmake_install.cmake
-out
 
 
 ## Ignore Visual Studio temporary files, build results, and
