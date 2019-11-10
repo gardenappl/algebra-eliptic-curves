@@ -1,4 +1,0 @@
-# ninja log v5
-7	832	595118406	CMakeFiles/algebra-elliptic-curves.dir/src/Arithmetic.cpp.obj	957708befc7e20b0
-1	872	595118406	CMakeFiles/algebra-elliptic-curves.dir/src/main.cpp.obj	264b7c6e2238ee04
-872	2390	595118407	bin/algebra-elliptic-curves.exe	296ab80fb429677b

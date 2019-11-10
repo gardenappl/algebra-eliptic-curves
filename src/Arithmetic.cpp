@@ -1,9 +1,10 @@
+#include <cassert>
 #include "Arithmetic.h"
 
 void LongModInt::removeZeros()
 {
 	while ((x.size() > 1) && (this->x.back() == 0)) x.pop_back();
-	if (x.size() == 1 && x[0] == 0) isNegative = false;
+	if (x.size() == 1 && x[0] == 0) negative = false;
 }
 
 void LongModInt::shiftRight()
@@ -20,9 +21,9 @@ void LongModInt::shiftRight()
 LongModInt::LongModInt(std::string str, std::string m)
 {
 	if (str[0] == '-') {
-		isNegative = true;
+		negative = true;
 	}
-	else isNegative = false;
+	else negative = false;
 	x.resize(str.length());
 	for (int i = 0; i < str.length(); i++) {
 		x[i] = str[i] - '0';	
@@ -36,13 +37,13 @@ LongModInt::LongModInt(std::string str, std::string m)
 
 LongModInt::LongModInt(bool isInfinite)
 {
-	this->isInfinite = isInfinite;
+	this->infinite = isInfinite;
 	LongModInt();
 }
 
 LongModInt::LongModInt()
 {
-	isNegative = false;
+	negative = false;
 }
 
 
@@ -85,19 +86,19 @@ LongModInt::LongModInt()
 
 std::ostream& operator<<(std::ostream& stream, LongModInt& number)
 {
-	if (number.isNegative) stream << '-';
+	if (number.negative) stream << '-';
 	for (int i = 0; i < number.x.size(); i++) {
 		stream << number.x[i];
 	}
 	return stream;
 }
 
-bool operator==(LongModInt& number1, LongModInt& number2)
+bool LongModInt::operator==(const LongModInt& number2) const
 {
-	if (number1.isNegative != number2.isNegative) return false;
-	if (number1.x.size() != number2.x.size()) return false;
-	for (int i = 0; i < number1.x.size(); i++)
-		if (number1.x[i] != number2.x[i]) return false;
+	if (this->negative != number2.negative) return false;
+	if (this->x.size() != number2.x.size()) return false;
+	for (int i = 0; i < this->x.size(); i++)
+		if (this->x[i] != number2.x[i]) return false;
 	return true;
 }
 
@@ -106,7 +107,7 @@ bool operator==(LongModInt& number1, LongModInt& number2)
 //	
 //}
 
-LongModInt intmultiply(LongModInt number1, LongModInt number2)
+LongModInt multiply_non_mod(const LongModInt& number1, const LongModInt& number2)
 {
 	LongModInt result;
 	int n = number1.x.size();
@@ -114,8 +115,8 @@ LongModInt intmultiply(LongModInt number1, LongModInt number2)
 	int size = n + t + 1;
 	result.x.resize(size);
 	int c = 0;
-	if (number1.isNegative && !number2.isNegative) result.isNegative = true;
-	if (number2.isNegative && !number1.isNegative) result.isNegative = true;
+	if (number1.negative && !number2.negative) result.negative = true;
+	if (number2.negative && !number1.negative) result.negative = true;
 
 	int shift = 0;
 	int shift_iterator = 0;
@@ -137,7 +138,7 @@ LongModInt intmultiply(LongModInt number1, LongModInt number2)
 	return result;
 }
 
-LongModInt intaddition(LongModInt number1, LongModInt number2)
+LongModInt add(const LongModInt& number1, LongModInt number2)
 {
     LongModInt result;
     int n1 = number1.x.size();
@@ -169,6 +170,19 @@ LongModInt intaddition(LongModInt number1, LongModInt number2)
     result.removeZeros();
     return result;
 
+}
+
+//This should return (a * b) % mod m
+LongModInt LongModInt::operator*(const LongModInt &number2) const
+{
+	assert(this->m == number2.m);
+	return multiply_non_mod(*this, number2);
+}
+
+LongModInt LongModInt::operator+(const LongModInt &number2) const
+{
+	assert(this->m == number2.m);
+	return add(*this, number2);
 }
 
 

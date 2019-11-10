@@ -9,9 +9,9 @@ int main()
 {
 	LongModInt x("23", "100");
 	LongModInt y("1234", "100");
-	LongModInt result = intmultiply(x, y);
+	LongModInt result = x * y;
 
 	cout << result << std::endl;
-	LongModInt result2 = intaddition(x, y);
+	LongModInt result2 = x + y;
 	cout << result2 << std::endl;
 }
