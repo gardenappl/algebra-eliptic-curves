@@ -11,7 +11,7 @@ int main()
 	Arithmetic y("1234", "100");
 	Arithmetic result = intmultiply(x, y);
 
-	cout << result;
+	cout << result << std::endl;
 	Arithmetic result2 = intaddition(x, y);
-	cout << result2;
+	cout << result2 << std::endl;
 }
