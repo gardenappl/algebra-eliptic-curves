@@ -23,7 +23,7 @@ bool Point::operator==(const Point &p)
 {
 	if(p.isInfinite())
 		return this->isInfinite();
-	if(!this->isInfinite())
+	else if(this->isInfinite())
 		return false;
 	return this->x == p.x && this->y == p.y;
 }
