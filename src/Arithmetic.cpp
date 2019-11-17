@@ -3,21 +3,22 @@
 
 const int BASE = 10;
 
-void LongModInt::revert(int size) {
-    	std::vector<int> updated_result;
+void LongModInt::revert(int size)
+{
+	std::vector<int> updated_result;
 	int i = size - 1;
 	while (i >= 0) {
 		updated_result.push_back(x[i]);
 		i--;
 	}
 	x = updated_result;
-
-
 }
+
 void LongModInt::removeZeros()
 {
-    while (this->x.size() > 1 && this->x.front() == 0) this->x.erase(x.begin());
+	while (this->x.size() > 1 && this->x.front() == 0) this->x.erase(x.begin());
 }
+
 
 void LongModInt::shiftRight()
 {
@@ -33,9 +34,9 @@ void LongModInt::shiftRight()
 LongModInt::LongModInt(std::string str, std::string m)
 {
 	if (str[0] == '-') {
-		isNegative = true;
+		negative = true;
 	}
-	else isNegative = false;
+	else negative = false;
 	x.resize(str.length());
 	for (int i = 0; i < str.length(); i++) {
 		x[i] = str[i] - '0';
@@ -54,57 +55,63 @@ LongModInt::LongModInt(int number, int m)
 	LongModInt(str, module);
 }
 
+LongModInt::LongModInt(std::vector<int> number)
+{
+	this->x = number;
+}
+
 LongModInt::LongModInt(bool isInfinite)
 {
-	this->isInfinite = isInfinite;
+	this->infinite = isInfinite;
 	LongModInt();
 }
 
 LongModInt::LongModInt()
 {
-	isNegative = false;
+	negative = false;
 }
 
-//
-//returning remainder - not ready
-//LongModInt intdivide(LongModInt number1, LongModInt number2)
-//{
-//	int n = number1.x.size();
-//	int t = number2.x.size();
-//	LongModInt result, current;
-//	LongModInt quotient;
-//	int x = 0;
-//	int left = 0;
-//	int right = 10;
-//	quotient.x.resize(n - t);
-//	result.x.resize(n);
-//	//cannot divide by zero
-//	//if (number2.x.size() == 1 && number2.x[0] == 0)
-//	for (long i = n - 1; i >= 0; --i) {
-//		current.shiftRight();
-//		current.x[0] = number1.x[i];
-//		current.removeZeros();
-//		x = 0;
-//		left = 0;
-//		right = BASE;
-//		while (left <= right) {
-//			int m = (left + right) / 2;
-//			LongModInt t = intmultiply(number2, LongModInt(m, 0));
-//			if (t <= current) {
-//				x = m;
-//				left = m + 1;
-//			}
-//			else right = m - 1;
-//		}
-//		result.x[i] = x;
-//		current = current - intmultiply();
-//	}
-//
-//}
+LongModInt intdivide(LongModInt number1, LongModInt number2)
+{
+	//cannot divide by zero
+	if (number2.x.size() == 1 && number2.x[0] == 0) return NULL;
+
+	int n = number1.x.size();
+	int t = number2.x.size();
+	LongModInt result, remainder;
+	LongModInt quotient;
+	int x = 0;
+	int left = 0;
+	int right = 10;
+	quotient.x.resize(n - t);
+	result.x.resize(n);
+
+	for (int i = 0; i < number1.x.size(); i++) {
+		remainder.x.push_back(number1.x[i]);
+		x = 0;
+		left = 0;
+		right = BASE;
+		while (left <= right) {
+			int m = (left + right) / 2;
+			LongModInt t = intmultiply(number2, LongModInt(m, 0));
+			if (t <= remainder) {
+				x = m;
+				left = m + 1;
+			}
+			else right = m - 1;
+		}
+		result.x[i] = x;
+		//remainder = remainder - intmultiply(number2, LongModInt(x, 0));
+	}
+	result.negative = number1.negative != number2.negative;
+	result.removeZeros();
+	return remainder;
+}
+
 
 std::ostream& operator<<(std::ostream& stream, const LongModInt& number)
 {
-	if (number.isNegative) stream << '-';
+	if (number.negative) stream << '-';
 	for (int i = 0; i < number.x.size(); i++) {
 		stream << number.x[i];
 	}
@@ -115,11 +122,31 @@ bool operator<(const LongModInt& number1, const LongModInt& number2)
 {
 	if (number1 == number2) return false;
 
+	if (number1.negative && !number2.negative)
+		return true;
+
+	if (!number1.negative && number2.negative)
+		return false;
+
+	if (number1.negative && number2.negative) return number2 < number1;
+
+	if (number1.x.size() != number2.x.size()) return number1.x.size() < number2.x.size();
+
+	//they have the same array sizes
+	for (int j = 0; j < number1.x.size(); j++)
+		if (number1.x[j] != number2.x[j]) return number1.x[j] < number2.x[j];
+
+	return false;
+}
+
+bool operator<=(const LongModInt& number1, const LongModInt& number2)
+{
+	return false;
 }
 
 bool operator==(const LongModInt& number1, const LongModInt& number2)
 {
-	if (number1.isNegative != number2.isNegative) return false;
+	if (number1.negative != number2.negative) return false;
 	if (number1.x.size() != number2.x.size()) return false;
 	for (int i = 0; i < number1.x.size(); i++)
 		if (number1.x[i] != number2.x[i]) return false;
@@ -139,6 +166,7 @@ bool operator>(const LongModInt& number1, const LongModInt& number2)
 				return true;
 	return false;
 }
+
 //Arithmetic multiply(Arithmetic number1, Arithmetic number2, int module)
 //{
 //
@@ -152,8 +180,8 @@ LongModInt intmultiply(LongModInt number1, LongModInt number2)
 	int size = n + t + 1;
 	result.x.resize(size);
 	int c = 0;
-	if (number1.isNegative && !number2.isNegative) result.isNegative = true;
-	if (number2.isNegative && !number1.isNegative) result.isNegative = true;
+	if (number1.negative && !number2.negative) result.negative = true;
+	if (number2.negative && !number1.negative) result.negative = true;
 
 	int shift = 0;
 	int shift_iterator = 0;
@@ -161,7 +189,7 @@ LongModInt intmultiply(LongModInt number1, LongModInt number2)
 	for (int i = number1.x.size() - 1; i >= 0; i--) {
 		c = 0;
 		shift_iterator = 0;
-		for (int j = number2.x.size() - 1; j >=0; j--) {
+		for (int j = number2.x.size() - 1; j >= 0; j--) {
 			int current = result.x[shift + shift_iterator] + number2.x[j] * number1.x[i] + c;
 			result.x[shift + shift_iterator] = current % 10;
 			c = current / 10;
@@ -170,7 +198,7 @@ LongModInt intmultiply(LongModInt number1, LongModInt number2)
 		result.x[shift + shift_iterator] = c;
 		shift++;
 	}
-
+	result.revert(size);
 	result.removeZeros();
 	return result;
 }
@@ -209,7 +237,7 @@ LongModInt intsubtraction (LongModInt number1, LongModInt number2)
 	result.x.resize(size);
 
 	if (number2 > number1) {
-            result.isNegative = true;
+            result.negative = true;
     }
 	number1.revert(n1);
 	number2.revert(n2);
