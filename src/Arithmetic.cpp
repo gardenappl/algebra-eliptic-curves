@@ -1,5 +1,6 @@
 #include "Arithmetic.h"
 #include <string>
+#include <iostream>
 
 const int BASE = 10;
 
@@ -52,7 +53,20 @@ LongModInt::LongModInt(int number, int m)
 {
 	std::string str = std::to_string(number);
 	std::string module = std::to_string(m);
-	LongModInt(str, module);
+
+	if (str[0] == '-') {
+		negative = true;
+	}
+	else negative = false;
+	x.resize(str.length());
+	for (int i = 0; i < str.length(); i++) {
+		x[i] = str[i] - '0';
+	}
+
+	this->m.resize(module.length());
+	for (int i = 0; i < module.length(); i++) {
+		this->m[i] = module[i] - '0';
+	}
 }
 
 LongModInt::LongModInt(std::vector<int> number)
@@ -93,7 +107,8 @@ LongModInt intdivide(LongModInt number1, LongModInt number2)
 		right = BASE;
 		while (left <= right) {
 			int m = (left + right) / 2;
-			LongModInt t = intmultiply(number2, LongModInt(m, 0));
+			LongModInt mod = LongModInt(m, 0);
+			LongModInt t = intmultiply(number2, mod);
 			if (t <= remainder) {
 				x = m;
 				left = m + 1;
@@ -101,7 +116,7 @@ LongModInt intdivide(LongModInt number1, LongModInt number2)
 			else right = m - 1;
 		}
 		result.x[i] = x;
-		//remainder = remainder - intmultiply(number2, LongModInt(x, 0));
+		remainder = intsubtraction(remainder, intmultiply(number2, LongModInt(x, 0)));
 	}
 	result.negative = number1.negative != number2.negative;
 	result.removeZeros();
@@ -141,7 +156,7 @@ bool operator<(const LongModInt& number1, const LongModInt& number2)
 
 bool operator<=(const LongModInt& number1, const LongModInt& number2)
 {
-	return false;
+	return (number1 < number2 || number1 == number2);
 }
 
 bool operator==(const LongModInt& number1, const LongModInt& number2)

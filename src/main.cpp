@@ -10,9 +10,9 @@ using namespace std;
 
 int main()
 {
-	LongModInt x("23", "100");
-	LongModInt y("1234", "100");
-	LongModInt result = intmultiply(x, y);
+	LongModInt x("123334", "100");
+	LongModInt y("134", "100");
+	LongModInt result = intdivide(x, y);
 
 	cout << result << std::endl;
 	LongModInt result2 = intaddition(x, y);
