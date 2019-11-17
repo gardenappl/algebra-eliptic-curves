@@ -3,10 +3,20 @@
 
 const int BASE = 10;
 
+void LongModInt::revert(int size) {
+    	std::vector<int> updated_result;
+	int i = size - 1;
+	while (i >= 0) {
+		updated_result.push_back(x[i]);
+		i--;
+	}
+	x = updated_result;
+
+
+}
 void LongModInt::removeZeros()
 {
-	while ((x.size() > 1) && (this->x.back() == 0)) x.pop_back();
-	if (x.size() == 1 && x[0] == 0) isNegative = false;
+    while (this->x.size() > 1 && this->x.front() == 0) this->x.erase(x.begin());
 }
 
 void LongModInt::shiftRight()
@@ -28,7 +38,7 @@ LongModInt::LongModInt(std::string str, std::string m)
 	else isNegative = false;
 	x.resize(str.length());
 	for (int i = 0; i < str.length(); i++) {
-		x[i] = str[i] - '0';	
+		x[i] = str[i] - '0';
 	}
 
 	this->m.resize(m.length());
@@ -104,7 +114,7 @@ std::ostream& operator<<(std::ostream& stream, const LongModInt& number)
 bool operator<(const LongModInt& number1, const LongModInt& number2)
 {
 	if (number1 == number2) return false;
-	
+
 }
 
 bool operator==(const LongModInt& number1, const LongModInt& number2)
@@ -116,9 +126,22 @@ bool operator==(const LongModInt& number1, const LongModInt& number2)
 	return true;
 }
 
+bool operator>(const LongModInt& number1, const LongModInt& number2)
+{
+    if (number1.x.size() < number2.x.size())
+		return false;
+    if (number1.x.size() > number2.x.size())
+		return true;
+	for (int i = 0; i < number2.x.size(); i++)
+		if (number1.x[i] < number2.x[i])
+			return false;
+		else if (number1.x[i] > number2.x[i])
+				return true;
+	return false;
+}
 //Arithmetic multiply(Arithmetic number1, Arithmetic number2, int module)
 //{
-//	
+//
 //}
 
 LongModInt intmultiply(LongModInt number1, LongModInt number2)
@@ -157,35 +180,56 @@ LongModInt intaddition(LongModInt number1, LongModInt number2)
     LongModInt result;
     int n1 = number1.x.size();
     int n2 = number2.x.size();
-    int size = n1 + 1;
+    int size = (n1 > n2 ? n1 : n2) + 1;
 	result.x.resize(size);
 
-    if (n1 > n2) {
-        int siz = n1;
-        number2.x.resize(siz);
-        for (int i = n1-1; i >= 0; i--) {
-            if (n2 != 0) {
-                number2.x[i] = number2.x[n2 - 1];
-                n2--;
-            }
-            else {
-            number2.x[i] = 0;
-        }
-    }
-    }
-    int c = 0;
-    for (int i = 0; i < n1; i++) {
-        int sum = number1.x[i] + number2.x[i] + c;
-        result.x[i] = sum % 10;//for b!=10 it will be mod b
-        if ((number1.x[i] + number2.x[i] + c) < 10) c = 0;
-        else c = 1;
-    }
-    result.x[n1 + 1] = c;
-    result.removeZeros();
-    return result;
+	number1.revert(n1);
+	number2.revert(n2);
 
+	int c = 0;
+	int i;
+	for (i = 0; i < size - 1; i++) {
+        c = (i < number1.x.size() ? number1.x[i] : 0) + (i < number2.x.size() ? number2.x[i] : 0) + c;
+        result.x[i] = c%10;
+        c = c/10;
+	}
+    result.x[i] = c;
+    result.revert(size);
+    result.removeZeros();
+
+    return result;
 }
 
+LongModInt intsubtraction (LongModInt number1, LongModInt number2)
+{
+    LongModInt result;
+    int n1 = number1.x.size();
+    int n2 = number2.x.size();
+    int size = (n1 > n2 ? n1 : n2) + 1;
+	result.x.resize(size);
+
+	if (number2 > number1) {
+            result.isNegative = true;
+    }
+	number1.revert(n1);
+	number2.revert(n2);
+
+	int c = 0;
+	for (int i = 0; i < size - 1; i++) {
+        int number = (i < number2.x.size() ? number2.x[i] : 0);
+        if (number1.x[i] + c >= number) {
+            result.x[i] = number1.x[i] + c - number;
+            c = 0;
+        }
+        else {
+            result.x[i] = 10 + number1.x[i] + c - number2.x[i];
+            c = -1;
+        }
+	}
+	result.revert(size);
+    result.removeZeros();
+    return result;
+}
 
 //bool operator<(Arithmetic& number1, Arithmetic& number2)
 //{
