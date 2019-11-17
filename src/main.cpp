@@ -12,7 +12,7 @@ int main()
 {
 	LongModInt x("123334", "100");
 	LongModInt y("134", "100");
-	LongModInt result = intdivide(x, y);
+	LongModInt result = x * y;
 
 	cout << result << std::endl;
 	LongModInt result2 = intaddition(x, y);

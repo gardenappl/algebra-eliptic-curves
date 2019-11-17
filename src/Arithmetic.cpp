@@ -72,6 +72,8 @@ LongModInt::LongModInt(int number, int m)
 LongModInt::LongModInt(std::vector<int> number)
 {
 	this->x = number;
+	this->negative = false;
+	this->infinite = false;
 }
 
 LongModInt::LongModInt(bool isInfinite)
@@ -168,6 +170,16 @@ bool operator==(const LongModInt& number1, const LongModInt& number2)
 	return true;
 }
 
+
+LongModInt operator*(const LongModInt& number1, const LongModInt& number2)
+{
+	if (number1.m != number2.m) return NULL;
+
+	LongModInt number = intmultiply(number1, number2);
+	LongModInt mod(number1.m);
+	return intdivide(number, mod);
+}
+
 bool operator>(const LongModInt& number1, const LongModInt& number2)
 {
     if (number1.x.size() < number2.x.size())
@@ -182,10 +194,6 @@ bool operator>(const LongModInt& number1, const LongModInt& number2)
 	return false;
 }
 
-//Arithmetic multiply(Arithmetic number1, Arithmetic number2, int module)
-//{
-//
-//}
 
 LongModInt intmultiply(LongModInt number1, LongModInt number2)
 {

@@ -31,7 +31,7 @@ public:
 	friend bool operator <(const LongModInt& number1, const LongModInt& number2);
 	friend bool operator <=(const LongModInt& number1, const LongModInt& number2);
 	friend bool operator ==(const LongModInt& number1, const LongModInt& number2);
-
+	friend LongModInt operator *(const LongModInt& number1, const LongModInt& number2);
 
 	bool isInfinite() { return this->infinite; };
 
