@@ -47,6 +47,10 @@ LongModInt::LongModInt(std::string str, std::string m)
 	for (int i = 0; i < m.length(); i++) {
 		this->m[i] = m[i] - '0';
 	}
+
+	if (x > m) {
+        this = intsubtraction(x, m);
+	}
 }
 
 LongModInt::LongModInt(int number, int m)
@@ -178,6 +182,26 @@ LongModInt operator*(const LongModInt& number1, const LongModInt& number2)
 	LongModInt number = intmultiply(number1, number2);
 	LongModInt mod(number1.m);
 	return intdivide(number, mod);
+}
+
+LongModInt operator +(const LongModInt& number1, const LongModInt& number2)
+{
+    LongModInt number = intaddition(number1, number2);
+    LongModInt mod(number1.m);
+    if (number >= mod) {
+        return intsubtraction(number, mod);
+    }
+    return number;
+}
+
+LongModInt operator -(const LongModInt& number1, const LongModInt& number2)
+{
+    if (number2 > number1) {
+        LongModInt number = intsubtraction(number1, number2);
+        LongModInt mod(number1.m);
+        return intaddition(number, mod);
+    }
+    return intsubtraction(number1, number2);
 }
 
 bool operator>(const LongModInt& number1, const LongModInt& number2)
