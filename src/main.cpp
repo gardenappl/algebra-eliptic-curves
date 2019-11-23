@@ -10,8 +10,12 @@ using namespace std;
 
 int main()
 {
-	LongModInt x("-58", "25");
-	cout << x << std::endl;
+	LongModInt x("20", "25");
+	LongModInt y("15", "25");
+
+	LongModInt result = (x + y) - y;
+
+	cout << result << std::endl;
 
 	EllipticCurve e(-25, 0);
 	cout << e.add(Point(0, 0), Point(-5, 0)) << endl;

@@ -171,6 +171,13 @@ LongModInt operator~(const LongModInt& number1)
 	return LongModInt();
 }
 
+LongModInt operator-(const LongModInt& number1)
+{
+	LongModInt number2 = number1;
+	number2.negative = !number1.negative;
+	return number2;
+}
+
 LongModInt operator /(const LongModInt& number1, const LongModInt& number2)
 {
 	return LongModInt();
@@ -179,19 +186,24 @@ LongModInt operator /(const LongModInt& number1, const LongModInt& number2)
 LongModInt operator *(const LongModInt& number1, const LongModInt& number2)
 {
 	if (number1.m != number2.m) return NULL;
-
 	LongModInt number = intmultiply(number1, number2);
 	LongModInt mod(number1.m);
-	return intdivide(number, mod);
+	LongModInt result = intdivide(number, mod);
+	result.m = number1.m;
+	return result;
 }
 
+//TODO check if module1 == module2
 LongModInt operator +(const LongModInt& number1, const LongModInt& number2)
 {
     LongModInt number = intaddition(number1, number2);
     LongModInt mod(number1.m);
     if (number >= mod) {
-        return intsubtraction(number, mod);
+		LongModInt result = intsubtraction(number, mod);
+		result.m = number1.m;
+		return result;
     }
+	number.m = number1.m;
     return number;
 }
 
@@ -200,15 +212,20 @@ LongModInt operator -(const LongModInt& number1, const LongModInt& number2)
     if (number2 > number1) {
         LongModInt number = intsubtraction(number1, number2);
         LongModInt mod(number1.m);
-        return intaddition(number, mod);
+		LongModInt result = intaddition(number, mod);
+		result.m = number1.m;
+		return result;
     }
-    return intsubtraction(number1, number2);
+	LongModInt result = intsubtraction(number1, number2);
+	result.m = number1.m;
+	return result;
 }
 
 
 LongModInt intmultiply(LongModInt number1, LongModInt number2)
 {
 	LongModInt result;
+	result.m = number1.m;
 	int n = number1.x.size();
 	int t = number2.x.size();
 	int size = n + t + 1;
@@ -240,9 +257,12 @@ LongModInt intmultiply(LongModInt number1, LongModInt number2)
 LongModInt intaddition(LongModInt number1, LongModInt number2)
 {
     LongModInt result;
+	result.m = number1.m;
     int n1 = number1.x.size();
     int n2 = number2.x.size();
 	
+	if (number2.negative && !number1.negative) return intsubtraction(number1, -number2);
+	if (number1.negative && !number2.negative) return intsubtraction(number2, -number1);
 	
     int size = (n1 > n2 ? n1 : n2) + 1;
 	result.x.resize(size);
@@ -267,6 +287,7 @@ LongModInt intaddition(LongModInt number1, LongModInt number2)
 LongModInt intsubtraction (LongModInt number1, LongModInt number2)
 {
     LongModInt result;
+	result.m = number1.m;
     int n1 = number1.x.size();
     int n2 = number2.x.size();
     int size = (n1 > n2 ? n1 : n2) + 1;
@@ -306,11 +327,11 @@ LongModInt intdivide(LongModInt number1, LongModInt number2)
 	int n = number1.x.size();
 	int t = number2.x.size();
 	LongModInt result, remainder;
-	LongModInt quotient;
+	result.m = number1.m;
+	remainder.m = number1.m;
 	int x = 0;
 	int left = 0;
 	int right = 10;
-	quotient.x.resize(n - t);
 	result.x.resize(n);
 
 	for (int i = 0; i < number1.x.size(); i++) {
