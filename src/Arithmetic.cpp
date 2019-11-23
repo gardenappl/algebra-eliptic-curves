@@ -48,9 +48,9 @@ LongModInt::LongModInt(std::string str, std::string m)
 		this->m[i] = m[i] - '0';
 	}
 
-	if (x > m) {
+	/*if (x > m) {
         this = intsubtraction(x, m);
-	}
+	}*/
 }
 
 LongModInt::LongModInt(int number, int m)
@@ -204,7 +204,7 @@ LongModInt operator -(const LongModInt& number1, const LongModInt& number2)
     return intsubtraction(number1, number2);
 }
 
-bool operator>(const LongModInt& number1, const LongModInt& number2)
+bool operator >(const LongModInt& number1, const LongModInt& number2)
 {
     if (number1.x.size() < number2.x.size())
 		return false;
@@ -218,6 +218,9 @@ bool operator>(const LongModInt& number1, const LongModInt& number2)
 	return false;
 }
 
+bool operator >=(const LongModInt& number1, const LongModInt& number2) {
+	return (number1 > number2) || (number1 == number2);
+}
 
 LongModInt intmultiply(LongModInt number1, LongModInt number2)
 {
