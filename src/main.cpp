@@ -10,10 +10,12 @@ using namespace std;
 
 int main()
 {
-	LongModInt x("20", "25");
-	LongModInt y("15", "25");
+	LongModInt x("4", "25");
+	LongModInt y("2", "25");
+	LongModInt a;
+	LongModInt b;
 
-	LongModInt result = (x + y) - y;
+	LongModInt result = gcdExtended(x, y, a, b);
 
 	cout << result << std::endl;
 

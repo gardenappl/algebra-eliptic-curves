@@ -26,7 +26,7 @@ LongModInt::LongModInt(std::string str, std::string m)
 	LongModInt number = LongModInt(this->x);
 
 	if (number > module) {
-		this->x = intdivide(number, module).x;
+		this->x = intremainder(number, module).x;
 	}
 
 	if (negative) {
@@ -102,6 +102,27 @@ void LongModInt::shiftRight()
 	x[0] = 0;
 }
 
+LongModInt gcdExtended(LongModInt a, LongModInt b, LongModInt& x, LongModInt& y)
+{
+	// Base Case 
+	if (a == LongModInt(0, 0))
+	{
+		x = LongModInt(0, 0);
+		y = LongModInt(1, 0);
+		std::cout << b << std::endl;
+		return b;
+	}
+
+	LongModInt x1, y1; // To store results of recursive call 
+	LongModInt gcd = gcdExtended(intremainder(b, a), a, x1, y1);
+
+	// Update x and y using results of recursive 
+	// call 
+	x = y1 - intdivide(b, a) * x1;
+	y = x1;
+
+	return gcd;
+}
 
 std::ostream& operator<<(std::ostream& stream, const LongModInt& number)
 {
@@ -188,7 +209,7 @@ LongModInt operator *(const LongModInt& number1, const LongModInt& number2)
 	if (number1.m != number2.m) return NULL;
 	LongModInt number = intmultiply(number1, number2);
 	LongModInt mod(number1.m);
-	LongModInt result = intdivide(number, mod);
+	LongModInt result = intremainder(number, mod);
 	result.m = number1.m;
 	return result;
 }
@@ -319,7 +340,7 @@ LongModInt intsubtraction (LongModInt number1, LongModInt number2)
     return result;
 }
 
-LongModInt intdivide(LongModInt number1, LongModInt number2)
+LongModInt intremainder(LongModInt number1, LongModInt number2)
 {
 	//cannot divide by zero
 	if (number2.x.size() == 1 && number2.x[0] == 0) return NULL;
@@ -355,4 +376,42 @@ LongModInt intdivide(LongModInt number1, LongModInt number2)
 	result.negative = number1.negative != number2.negative;
 	result.removeZeros();
 	return remainder;
+}
+
+LongModInt intdivide(LongModInt number1, LongModInt number2)
+{
+	//cannot divide by zero
+	if (number2.x.size() == 1 && number2.x[0] == 0) return NULL;
+
+	int n = number1.x.size();
+	int t = number2.x.size();
+	LongModInt result, remainder;
+	result.m = number1.m;
+	remainder.m = number1.m;
+	int x = 0;
+	int left = 0;
+	int right = 10;
+	result.x.resize(n);
+
+	for (int i = 0; i < number1.x.size(); i++) {
+		remainder.x.push_back(number1.x[i]);
+		x = 0;
+		left = 0;
+		right = BASE;
+		while (left <= right) {
+			int m = (left + right) / 2;
+			LongModInt mod = LongModInt(m, 0);
+			LongModInt t = intmultiply(number2, mod);
+			if (t <= remainder) {
+				x = m;
+				left = m + 1;
+			}
+			else right = m - 1;
+		}
+		result.x[i] = x;
+		remainder = intsubtraction(remainder, intmultiply(number2, LongModInt(x, 0)));
+	}
+	result.negative = number1.negative != number2.negative;
+	result.removeZeros();
+	return result;
 }
