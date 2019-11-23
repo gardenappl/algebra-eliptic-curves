@@ -4,34 +4,6 @@
 
 const int BASE = 10;
 
-void LongModInt::revert(int size)
-{
-	std::vector<int> updated_result;
-	int i = size - 1;
-	while (i >= 0) {
-		updated_result.push_back(x[i]);
-		i--;
-	}
-	x = updated_result;
-}
-
-void LongModInt::removeZeros()
-{
-	while (this->x.size() > 1 && this->x.front() == 0) this->x.erase(x.begin());
-}
-
-
-void LongModInt::shiftRight()
-{
-	if (x.size() == 0) {
-		x.push_back(0);
-		return;
-	}
-	x.push_back(x[x.size() - 1]);
-	for (int i = x.size() - 2; i > 0; --i) x[i] = x[i - 1];
-	x[0] = 0;
-}
-
 LongModInt::LongModInt(std::string str, std::string m)
 {
 	int i = 0;
@@ -102,42 +74,32 @@ LongModInt::LongModInt()
 	negative = false;
 }
 
-LongModInt intdivide(LongModInt number1, LongModInt number2)
+
+void LongModInt::revert(int size)
 {
-	//cannot divide by zero
-	if (number2.x.size() == 1 && number2.x[0] == 0) return NULL;
-
-	int n = number1.x.size();
-	int t = number2.x.size();
-	LongModInt result, remainder;
-	LongModInt quotient;
-	int x = 0;
-	int left = 0;
-	int right = 10;
-	quotient.x.resize(n - t);
-	result.x.resize(n);
-
-	for (int i = 0; i < number1.x.size(); i++) {
-		remainder.x.push_back(number1.x[i]);
-		x = 0;
-		left = 0;
-		right = BASE;
-		while (left <= right) {
-			int m = (left + right) / 2;
-			LongModInt mod = LongModInt(m, 0);
-			LongModInt t = intmultiply(number2, mod);
-			if (t <= remainder) {
-				x = m;
-				left = m + 1;
-			}
-			else right = m - 1;
-		}
-		result.x[i] = x;
-		remainder = intsubtraction(remainder, intmultiply(number2, LongModInt(x, 0)));
+	std::vector<int> updated_result;
+	int i = size - 1;
+	while (i >= 0) {
+		updated_result.push_back(x[i]);
+		i--;
 	}
-	result.negative = number1.negative != number2.negative;
-	result.removeZeros();
-	return remainder;
+	x = updated_result;
+}
+
+void LongModInt::removeZeros()
+{
+	while (this->x.size() > 1 && this->x.front() == 0) this->x.erase(x.begin());
+}
+
+void LongModInt::shiftRight()
+{
+	if (x.size() == 0) {
+		x.push_back(0);
+		return;
+	}
+	x.push_back(x[x.size() - 1]);
+	for (int i = x.size() - 2; i > 0; --i) x[i] = x[i - 1];
+	x[0] = 0;
 }
 
 
@@ -150,7 +112,7 @@ std::ostream& operator<<(std::ostream& stream, const LongModInt& number)
 	return stream;
 }
 
-bool operator<(const LongModInt& number1, const LongModInt& number2)
+bool operator <(const LongModInt& number1, const LongModInt& number2)
 {
 	if (number1 == number2) return false;
 
@@ -171,12 +133,12 @@ bool operator<(const LongModInt& number1, const LongModInt& number2)
 	return false;
 }
 
-bool operator<=(const LongModInt& number1, const LongModInt& number2)
+bool operator <=(const LongModInt& number1, const LongModInt& number2)
 {
 	return (number1 < number2 || number1 == number2);
 }
 
-bool operator==(const LongModInt& number1, const LongModInt& number2)
+bool operator ==(const LongModInt& number1, const LongModInt& number2)
 {
 	if (number1.negative != number2.negative) return false;
 	if (number1.x.size() != number2.x.size()) return false;
@@ -185,8 +147,36 @@ bool operator==(const LongModInt& number1, const LongModInt& number2)
 	return true;
 }
 
+bool operator >(const LongModInt& number1, const LongModInt& number2)
+{
+	if (number1.x.size() < number2.x.size())
+		return false;
+	if (number1.x.size() > number2.x.size())
+		return true;
+	for (int i = 0; i < number2.x.size(); i++)
+		if (number1.x[i] < number2.x[i])
+			return false;
+		else if (number1.x[i] > number2.x[i])
+			return true;
+	return false;
+}
 
-LongModInt operator*(const LongModInt& number1, const LongModInt& number2)
+bool operator >=(const LongModInt& number1, const LongModInt& number2) {
+	return (number1 > number2) || (number1 == number2);
+}
+
+
+LongModInt operator~(const LongModInt& number1)
+{
+	return LongModInt();
+}
+
+LongModInt operator /(const LongModInt& number1, const LongModInt& number2)
+{
+	return LongModInt();
+}
+
+LongModInt operator *(const LongModInt& number1, const LongModInt& number2)
 {
 	if (number1.m != number2.m) return NULL;
 
@@ -215,23 +205,6 @@ LongModInt operator -(const LongModInt& number1, const LongModInt& number2)
     return intsubtraction(number1, number2);
 }
 
-bool operator >(const LongModInt& number1, const LongModInt& number2)
-{
-    if (number1.x.size() < number2.x.size())
-		return false;
-    if (number1.x.size() > number2.x.size())
-		return true;
-	for (int i = 0; i < number2.x.size(); i++)
-		if (number1.x[i] < number2.x[i])
-			return false;
-		else if (number1.x[i] > number2.x[i])
-				return true;
-	return false;
-}
-
-bool operator >=(const LongModInt& number1, const LongModInt& number2) {
-	return (number1 > number2) || (number1 == number2);
-}
 
 LongModInt intmultiply(LongModInt number1, LongModInt number2)
 {
@@ -325,22 +298,40 @@ LongModInt intsubtraction (LongModInt number1, LongModInt number2)
     return result;
 }
 
-//bool operator<(Arithmetic& number1, Arithmetic& number2)
-//{
-//	if (number1 == number2) return false;
-//
-//	if (number1.isNegative && !number2.isNegative)
-//		return true;
-//
-//	if (!number1.isNegative && number2.isNegative)
-//		return false;
-//
-//	if (number1.isNegative && number2.isNegative) return number2 < number1;
-//
-//
-//	for (int i = number1.x.size() - 1; i >= 0; --i) {
-//		if (number1.x[i] != number2.x[i]) return
-//
-//}
+LongModInt intdivide(LongModInt number1, LongModInt number2)
+{
+	//cannot divide by zero
+	if (number2.x.size() == 1 && number2.x[0] == 0) return NULL;
 
+	int n = number1.x.size();
+	int t = number2.x.size();
+	LongModInt result, remainder;
+	LongModInt quotient;
+	int x = 0;
+	int left = 0;
+	int right = 10;
+	quotient.x.resize(n - t);
+	result.x.resize(n);
 
+	for (int i = 0; i < number1.x.size(); i++) {
+		remainder.x.push_back(number1.x[i]);
+		x = 0;
+		left = 0;
+		right = BASE;
+		while (left <= right) {
+			int m = (left + right) / 2;
+			LongModInt mod = LongModInt(m, 0);
+			LongModInt t = intmultiply(number2, mod);
+			if (t <= remainder) {
+				x = m;
+				left = m + 1;
+			}
+			else right = m - 1;
+		}
+		result.x[i] = x;
+		remainder = intsubtraction(remainder, intmultiply(number2, LongModInt(x, 0)));
+	}
+	result.negative = number1.negative != number2.negative;
+	result.removeZeros();
+	return remainder;
+}
