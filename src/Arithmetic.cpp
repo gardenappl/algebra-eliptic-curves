@@ -34,23 +34,34 @@ void LongModInt::shiftRight()
 
 LongModInt::LongModInt(std::string str, std::string m)
 {
+	int i = 0;
 	if (str[0] == '-') {
 		negative = true;
+		i = 1;
 	}
 	else negative = false;
 	x.resize(str.length());
-	for (int i = 0; i < str.length(); i++) {
+	for (; i < str.length(); i++) {
 		x[i] = str[i] - '0';
 	}
-
+	//TODO check negative module
 	this->m.resize(m.length());
-	for (int i = 0; i < m.length(); i++) {
+	for (i = 0; i < m.length(); i++) {
 		this->m[i] = m[i] - '0';
 	}
 
-	/*if (x > m) {
-        this = intsubtraction(x, m);
-	}*/
+	LongModInt module = LongModInt(this->m);
+	LongModInt number = LongModInt(this->x);
+
+	if (number > module) {
+		this->x = intdivide(number, module).x;
+	}
+
+	if (negative) {
+		number = LongModInt(this->x);
+		this->x = intsubtraction(module, number).x;
+		negative = false;
+	}
 }
 
 LongModInt::LongModInt(int number, int m)
@@ -258,6 +269,8 @@ LongModInt intaddition(LongModInt number1, LongModInt number2)
     LongModInt result;
     int n1 = number1.x.size();
     int n2 = number2.x.size();
+	
+	
     int size = (n1 > n2 ? n1 : n2) + 1;
 	result.x.resize(size);
 
@@ -288,6 +301,9 @@ LongModInt intsubtraction (LongModInt number1, LongModInt number2)
 
 	if (number2 > number1) {
             result.negative = true;
+			LongModInt temp = number1;
+			number1 = number2;
+			number2 = temp;
     }
 	number1.revert(n1);
 	number2.revert(n2);
