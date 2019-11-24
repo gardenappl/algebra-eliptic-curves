@@ -202,6 +202,7 @@ LongModInt operator~(const LongModInt& number1)
 		res.m = number1.m;
 		return res;
 	}
+	return LongModInt(-1, 0);
 }
 
 LongModInt operator-(const LongModInt& number1)
@@ -213,7 +214,15 @@ LongModInt operator-(const LongModInt& number1)
 
 LongModInt operator /(const LongModInt& number1, const LongModInt& number2)
 {
-	return LongModInt();
+	LongModInt x, y;
+	LongModInt module(number1.m);
+	LongModInt inv = ~number2;
+	if (inv == LongModInt(-1, 0)) {
+		std::cout << "Division not defined";
+		return LongModInt(-1, 0);
+	}
+	else
+		return inv * number1;
 }
 
 LongModInt operator *(const LongModInt& number1, const LongModInt& number2)
