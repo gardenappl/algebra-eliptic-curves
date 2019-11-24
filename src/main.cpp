@@ -13,8 +13,11 @@ int main()
 	LongModInt x("2", "17");
 	LongModInt y("13", "17");
 
-	LongModInt result = x / y;
-	cout << x << " / " << y << " = " << result << std::endl;
+	LongModInt result = x - y;
+	cout << x << " - " << y << " = " << result << std::endl;
+
+	result = x - y + y;
+	cout << x << " - " << y << " + " << y << " = " << result << std::endl;
 
 	result = x * y;
 	cout << x << " * " << y << " = " << result << std::endl;
@@ -22,11 +25,8 @@ int main()
 	result = x + y;
 	cout << x << " + " << y << " = " << result << std::endl;
 
-	result = x - y;
-	cout << x << " - " << y << " = " << result << std::endl;
-
-	result = x - y + y;
-	cout << x << " - " << y << " + " << y << " = " << result << std::endl;
+	result = x * y;
+	cout << x << " * " << y << " = " << result << std::endl;
 
 	bool boolResult = x < y;
 	cout << x << " < " << y << " ? " << boolalpha << boolResult << std::endl;
@@ -40,7 +40,8 @@ int main()
 	boolResult = x <= y;
 	cout << x << " <= " << y << " ? " << boolalpha << boolResult << std::endl;
 
-	EllipticCurve e(-25, 0);
-	cout << e.add(Point(0, 0), Point(-5, 0)) << endl;
-	cout << e.add(Point(0, 0), Point(0, 0)) << endl;
+	//y^2 = x^3 + 3x + 5 (mod 7)
+	EllipticCurve e("3", "5", "7");
+	cout << e.add({"1", "4"}, {"1", "4"}) << endl;
+	cout << e.add({"0", "0"}, {"0", "0"}) << endl;
 }

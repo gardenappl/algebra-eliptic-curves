@@ -2,6 +2,7 @@
 
 #include <limits>
 #include <iostream>
+#include "Arithmetic.h"
 
 using namespace std;
 
@@ -11,12 +12,12 @@ private:
 	bool infinite = false;
 
 public:
-	long x;
-	long y;
+	LongModInt x;
+	LongModInt y;
 
 	Point() = default;
-	Point(long x, long y);
-	static Point makeInfinite();
+	Point(const LongModInt& x, const LongModInt& y);
+	static Point makeInfinite(); //"constructor" for infinite point
 
 	bool isInfinite() const;
 	bool operator==(const Point& p);
@@ -24,15 +25,18 @@ public:
 };
 
 //Weierstrass equation: y^2 = x^3 + Ax + B
-//(long will be replaced by LongModInt)
 class EllipticCurve
 {
-	long a;
-	long b;
+	LongModInt a;
+	LongModInt b;
 
 public:
-	EllipticCurve(long p1, long p2);
+	//to-do: check if modulo is prime?
+	EllipticCurve(const LongModInt& a, const LongModInt& b);
+	EllipticCurve(const std::string& a, const std::string& b, const std::string& mod);
 
-	Point add(const Point& p1, const Point& p2);
-	Point invert(const Point& p);
+	Point add(const Point& p1, const Point& p2) const;
+	Point add(const std::pair<std::string, std::string>& p1, const std::pair<std::string, std::string>& p2) const;
+	Point invert(const Point& p) const;
+	bool isVaild(const Point& p) const;
 };

@@ -298,7 +298,8 @@ LongModInt LongModInt::operator-() const
 
 LongModInt LongModInt::operator/(const LongModInt& number2) const
 {
-	assert(this->m == number2.m);
+	if(!checkEqualMods(*this, number2))
+		throw std::invalid_argument("Moduli must be equal.");
 
 	LongModInt x, y;
 	LongModInt module(this->m);
@@ -313,7 +314,8 @@ LongModInt LongModInt::operator/(const LongModInt& number2) const
 
 LongModInt LongModInt::operator *(const LongModInt& number2) const
 {
-	assert(this->m == number2.m);
+	if(!checkEqualMods(*this, number2))
+		throw std::invalid_argument("Moduli must be equal.");
 
 	LongModInt number = signedMultiply(*this, number2);
 	LongModInt mod(this->m);
@@ -324,7 +326,8 @@ LongModInt LongModInt::operator *(const LongModInt& number2) const
 
 LongModInt LongModInt::operator +(const LongModInt& number2) const
 {
-	assert(this->m == number2.m);
+	if(!checkEqualMods(*this, number2))
+		throw std::invalid_argument("Moduli must be equal.");
 
     LongModInt number = signedAdd(*this, number2);
     LongModInt mod(this->m);
@@ -339,7 +342,8 @@ LongModInt LongModInt::operator +(const LongModInt& number2) const
 
 LongModInt LongModInt::operator-(const LongModInt& number2) const
 {
-	assert(this->m == number2.m);
+	if(!checkEqualMods(*this, number2))
+		throw std::invalid_argument("Moduli must be equal.");
 
     if (number2 > *this) {
         LongModInt number = signedSubtract(*this, number2);
@@ -539,6 +543,16 @@ LongModInt LongModInt::signedNeg(const LongModInt& number1)
 	LongModInt number2 = number1;
 	number2.negative = !number1.negative;
 	return number2;
+}
+
+bool LongModInt::checkEqualMods(const LongModInt& number1, const LongModInt &number2)
+{
+	return number1.m == number2.m;
+}
+
+std::vector<int> LongModInt::getMod() const
+{
+	return m;
 }
 
 

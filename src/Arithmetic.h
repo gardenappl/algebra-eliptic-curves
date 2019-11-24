@@ -9,7 +9,6 @@ private:
 	LongModInt(long long number);
 	LongModInt(long long number, long long m);
 	LongModInt(long long number, const std::vector<int>& m);
-	LongModInt(const std::string& str, const std::vector<int>& m);
 	explicit LongModInt(const std::vector<int>& number);
 
 	std::vector<int> x;
@@ -33,7 +32,10 @@ private:
 public:
 	LongModInt();
 	LongModInt(const std::string& str, const std::string& m);
+	LongModInt(const std::string& str, const std::vector<int>& m);
 	//bool isNegative() { return negative; };
+	static bool checkEqualMods(const LongModInt& number1, const LongModInt& number2);
+	std::vector<int> getMod() const;
 
 
 	friend std::ostream& operator <<(std::ostream& stream, const LongModInt& number);
