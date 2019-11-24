@@ -6,11 +6,8 @@
 class LongModInt
 {
 private:
-	LongModInt();
-	LongModInt(int number, int m);
 	LongModInt(int number, const std::vector<int>& m);
 	explicit LongModInt(std::vector<int> number);
-	static LongModInt makeInfinite();
 
 	std::vector<int> x;
 	bool negative;
@@ -32,7 +29,10 @@ private:
 	
 
 public:
+	LongModInt();
 	LongModInt(std::string str, std::string m);
+	LongModInt(int number, int m);
+	static LongModInt makeInfinite();
 	//bool isNegative() { return negative; };
 	bool isInfinite() { return this->infinite; };
 
