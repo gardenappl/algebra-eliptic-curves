@@ -109,18 +109,12 @@ LongModInt gcdExtended(LongModInt a, LongModInt b, LongModInt& x, LongModInt& y)
 	{
 		x = LongModInt(0, 0);
 		y = LongModInt(1, 0);
-		std::cout << b << std::endl;
 		return b;
 	}
-
-	LongModInt x1, y1; // To store results of recursive call 
+	LongModInt x1, y1;
 	LongModInt gcd = gcdExtended(intremainder(b, a), a, x1, y1);
-
-	// Update x and y using results of recursive 
-	// call 
-	x = y1 - intdivide(b, a) * x1;
+	x = intsubtraction(y1, intmultiply(intdivide(b, a), x1));
 	y = x1;
-
 	return gcd;
 }
 
@@ -186,10 +180,28 @@ bool operator >=(const LongModInt& number1, const LongModInt& number2) {
 	return (number1 > number2) || (number1 == number2);
 }
 
-
+//TODO operator !=
 LongModInt operator~(const LongModInt& number1)
 {
-	return LongModInt();
+	LongModInt x, y;
+	LongModInt module(number1.m);
+
+	LongModInt g = gcdExtended(number1, module, x, y);
+	if (!(g == LongModInt(1,0)))
+		std::cout << "Inverse doesn't exist";
+	else
+	{
+		if (x > module) {
+			x = intremainder(x, module);
+		}
+		if (x.negative) {
+			x = intsubtraction(module, -x);
+			x.negative = false;
+		}
+		LongModInt res = x;
+		res.m = number1.m;
+		return res;
+	}
 }
 
 LongModInt operator-(const LongModInt& number1)
@@ -313,6 +325,10 @@ LongModInt intsubtraction (LongModInt number1, LongModInt number2)
     int n2 = number2.x.size();
     int size = (n1 > n2 ? n1 : n2) + 1;
 	result.x.resize(size);
+
+	if (!number1.negative && number2.negative) return intaddition(number1, -number2);
+	if (number1.negative && !number2.negative) return -intaddition(-number1, number2);
+	if (number1.negative && number2.negative) return intsubtraction(-number2, -number1);
 
 	if (number2 > number1) {
             result.negative = true;
