@@ -70,15 +70,16 @@ LongModInt::LongModInt(std::vector<int> number)
 	this->infinite = false;
 }
 
-LongModInt::LongModInt(bool isInfinite)
-{
-	this->infinite = isInfinite;
-	LongModInt();
-}
-
 LongModInt::LongModInt()
 {
 	negative = false;
+}
+
+LongModInt LongModInt::makeInfinite()
+{
+	LongModInt number;
+	number.infinite = true;
+	return number;
 }
 
 

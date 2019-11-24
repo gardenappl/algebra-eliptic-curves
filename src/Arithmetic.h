@@ -9,8 +9,8 @@ private:
 	LongModInt();
 	LongModInt(int number, int m);
 	LongModInt(int number, const std::vector<int>& m);
-	LongModInt(std::vector<int> number);
-	LongModInt(bool isInfinite);
+	explicit LongModInt(std::vector<int> number);
+	static LongModInt makeInfinite();
 
 	std::vector<int> x;
 	bool negative;
