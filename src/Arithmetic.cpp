@@ -418,7 +418,14 @@ LongModInt LongModInt::signedAdd(LongModInt number1, LongModInt number2)
 
 LongModInt LongModInt::signedSubtract (LongModInt number1, LongModInt number2)
 {
-    LongModInt result;
+	LongModInt result;
+	if (number2 > number1) {
+		result.negative = true;
+		LongModInt temp = number1;
+		number1 = number2;
+		number2 = temp;
+	}
+
 	result.m = number1.m;
     int n1 = number1.x.size();
     int n2 = number2.x.size();
@@ -429,14 +436,8 @@ LongModInt LongModInt::signedSubtract (LongModInt number1, LongModInt number2)
 	if (number1.negative && !number2.negative) return signedNeg(signedAdd(signedNeg(number1), number2));
 	if (number1.negative && number2.negative) return signedSubtract(signedNeg(number2), signedNeg(number1));
 
-	if (number2 > number1) {
-            result.negative = true;
-			LongModInt temp = number1;
-			number1 = number2;
-			number2 = temp;
-    }
-	number1.revert(n1);
-	number2.revert(n2);
+	if (number1.x.size() > 1) number1.revert(n1);
+	if (number2.x.size() > 1) number2.revert(n2);
 
 	int c = 0;
 	for (int i = 0; i < size - 1; i++) {

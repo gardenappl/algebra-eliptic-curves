@@ -10,7 +10,7 @@ using namespace std;
 
 int main()
 {
-	LongModInt x("15", "17");
+	LongModInt x("2", "17");
 	LongModInt y("13", "17");
 
 	LongModInt result = x / y;
@@ -27,9 +27,6 @@ int main()
 
 	result = x - y + y;
 	cout << x << " - " << y << " + " << y << " = " << result << std::endl;
-
-	result = -y;
-	cout << '-' << y << " = " << result << std::endl;
 
 	bool boolResult = x < y;
 	cout << x << " < " << y << " ? " << boolalpha << boolResult << std::endl;
