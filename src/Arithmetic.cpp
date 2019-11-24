@@ -6,7 +6,7 @@
 
 const int BASE = 10;
 
-LongModInt::LongModInt(std::string str, std::string m)
+LongModInt::LongModInt(const std::string& str, const std::string& m)
 {
 	int i = 0;
 
@@ -31,6 +31,35 @@ LongModInt::LongModInt(std::string str, std::string m)
 	this->m.resize(m.length());
 	for (i = 0; i < m.length(); i++) {
 		this->m[i] = m[i] - '0';
+	}
+
+	LongModInt module = LongModInt(this->m);
+	LongModInt number = LongModInt(this->x);
+
+	if (number > module) {
+		this->x = signedMod(number, module).x;
+	}
+
+	if (negative) {
+		number = LongModInt(this->x);
+		this->x = signedSubtract(module, number).x;
+		negative = false;
+	}
+}
+
+LongModInt::LongModInt(const std::string& str, const std::vector<int>& m)
+	: m(m), negative(false)
+{
+	int i = 0;
+
+	//Don't let users create negative integers
+	if(!str.empty() && str[0] == '-')
+		throw std::invalid_argument("Integers can't be negative in modular arithmetic.");
+	negative = false;
+
+	x.resize(str.length());
+	for (; i < str.length(); i++) {
+		x[i] = str[i] - '0';
 	}
 
 	LongModInt module = LongModInt(this->m);
@@ -513,55 +542,55 @@ LongModInt LongModInt::signedNeg(const LongModInt& number1)
 
 
 
-//Operators with long, for convenience
+//Operators with strings, for convenience
 
-LongModInt operator*(long long number, const LongModInt& number2)
+LongModInt operator*(const std::string& number, const LongModInt& number2)
 {
 	return LongModInt(number, number2.m) * number2;
 }
 
-LongModInt operator/(long long number, const LongModInt& number2)
+LongModInt operator/(const std::string&  number, const LongModInt& number2)
 {
 	return LongModInt(number, number2.m) / number2;
 }
 
-LongModInt operator+(long long number, const LongModInt& number2)
+LongModInt operator+(const std::string& number, const LongModInt& number2)
 {
 	return LongModInt(number, number2.m) + number2;
 }
 
-LongModInt operator-(long long number, const LongModInt& number2)
+LongModInt operator-(const std::string& number, const LongModInt& number2)
 {
 	return LongModInt(number, number2.m) - number2;
 }
 
 
-LongModInt LongModInt::operator/(long long number2) const
+LongModInt LongModInt::operator/(const std::string& number2) const
 {
 	return *this / LongModInt(number2, this->m);
 }
 
-LongModInt LongModInt::operator*(long long number2) const
+LongModInt LongModInt::operator*(const std::string& number2) const
 {
 	return *this * LongModInt(number2, this->m);
 }
 
-LongModInt LongModInt::operator-(long long number2) const
+LongModInt LongModInt::operator-(const std::string& number2) const
 {
 	return *this - LongModInt(number2, this->m);
 }
 
-LongModInt LongModInt::operator+(long long number2) const
+LongModInt LongModInt::operator+(const std::string& number2) const
 {
 	return *this + LongModInt(number2, this->m);
 }
 
-bool LongModInt::operator==(long long number2) const
+bool LongModInt::operator==(const std::string& number2) const
 {
 	return *this == LongModInt(number2, this->m);
 }
 
-bool LongModInt::operator!=(long long number2) const
+bool LongModInt::operator!=(const std::string& number2) const
 {
 	return *this != LongModInt(number2, this->m);
 }

@@ -9,6 +9,7 @@ private:
 	LongModInt(long long number);
 	LongModInt(long long number, long long m);
 	LongModInt(long long number, const std::vector<int>& m);
+	LongModInt(const std::string& str, const std::vector<int>& m);
 	explicit LongModInt(const std::vector<int>& number);
 
 	std::vector<int> x;
@@ -31,7 +32,7 @@ private:
 
 public:
 	LongModInt();
-	LongModInt(std::string str, std::string m);
+	LongModInt(const std::string& str, const std::string& m);
 	//bool isNegative() { return negative; };
 
 
@@ -44,8 +45,8 @@ public:
 	friend bool operator !=(const LongModInt& number1, const LongModInt& number2);
 
 	//TO-DO: more comparison functions, if needed
-	bool operator !=(long long number2) const;
-	bool operator ==(long long number2) const;
+	bool operator !=(const std::string&) const;
+	bool operator ==(const std::string&) const;
 
 	// ~x is x^-1
 	LongModInt operator ~() const;
@@ -55,15 +56,15 @@ public:
 	LongModInt operator -(const LongModInt& number2) const;
 	LongModInt operator +(const LongModInt& number2) const;
 
-	LongModInt operator /(long long number2) const;
-	LongModInt operator *(long long number2) const;
-	LongModInt operator -(long long number2) const;
-	LongModInt operator +(long long number2) const;
+	LongModInt operator /(const std::string& number2) const;
+	LongModInt operator *(const std::string& number2) const;
+	LongModInt operator -(const std::string& number2) const;
+	LongModInt operator +(const std::string& number2) const;
 
-	friend LongModInt operator /(long long number1, const LongModInt& number2);
-	friend LongModInt operator *(long long number1, const LongModInt& number2);
-	friend LongModInt operator -(long long number1, const LongModInt& number2);
-	friend LongModInt operator +(long long number1, const LongModInt& number2);
+	friend LongModInt operator /(const std::string& number1, const LongModInt& number2);
+	friend LongModInt operator *(const std::string& number1, const LongModInt& number2);
+	friend LongModInt operator -(const std::string& number1, const LongModInt& number2);
+	friend LongModInt operator +(const std::string& number1, const LongModInt& number2);
 };
 
 
