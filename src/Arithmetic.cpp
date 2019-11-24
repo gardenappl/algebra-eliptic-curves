@@ -1,6 +1,7 @@
 #include "Arithmetic.h"
 #include <string>
 #include <iostream>
+#include <cassert>
 
 const int BASE = 10;
 
@@ -26,12 +27,12 @@ LongModInt::LongModInt(std::string str, std::string m)
 	LongModInt number = LongModInt(this->x);
 
 	if (number > module) {
-		this->x = intremainder(number, module).x;
+		this->x = signedMod(number, module).x;
 	}
 
 	if (negative) {
 		number = LongModInt(this->x);
-		this->x = intsubtraction(module, number).x;
+		this->x = signedSubtract(module, number).x;
 		negative = false;
 	}
 }
@@ -54,6 +55,12 @@ LongModInt::LongModInt(int number, int m)
 	for (int i = 0; i < module.length(); i++) {
 		this->m[i] = module[i] - '0';
 	}
+}
+
+LongModInt::LongModInt(int number, const std::vector<int>& m)
+	: m(m), negative(false)
+{
+	x.push_back(0);
 }
 
 LongModInt::LongModInt(std::vector<int> number)
@@ -102,7 +109,7 @@ void LongModInt::shiftRight()
 	x[0] = 0;
 }
 
-LongModInt gcdExtended(LongModInt a, LongModInt b, LongModInt& x, LongModInt& y)
+LongModInt LongModInt::gcdExtended(const LongModInt& a, const LongModInt& b, LongModInt& x, LongModInt& y)
 {
 	// Base Case 
 	if (a == LongModInt(0, 0))
@@ -112,8 +119,8 @@ LongModInt gcdExtended(LongModInt a, LongModInt b, LongModInt& x, LongModInt& y)
 		return b;
 	}
 	LongModInt x1, y1;
-	LongModInt gcd = gcdExtended(intremainder(b, a), a, x1, y1);
-	x = intsubtraction(y1, intmultiply(intdivide(b, a), x1));
+	LongModInt gcd = gcdExtended(signedMod(b, a), a, x1, y1);
+	x = signedSubtract(y1, signedMultiply(signedDivide(b, a), x1));
 	y = x1;
 	return gcd;
 }
@@ -150,7 +157,12 @@ bool operator <(const LongModInt& number1, const LongModInt& number2)
 
 bool operator <=(const LongModInt& number1, const LongModInt& number2)
 {
-	return (number1 < number2 || number1 == number2);
+	return !(number1 > number2);
+}
+
+bool operator >=(const LongModInt& number1, const LongModInt& number2)
+{
+	return !(number1 < number2);
 }
 
 bool operator ==(const LongModInt& number1, const LongModInt& number2)
@@ -160,6 +172,11 @@ bool operator ==(const LongModInt& number1, const LongModInt& number2)
 	for (int i = 0; i < number1.x.size(); i++)
 		if (number1.x[i] != number2.x[i]) return false;
 	return true;
+}
+
+bool operator !=(const LongModInt& number1, const LongModInt& number2)
+{
+	return !(number1 == number2);
 }
 
 bool operator >(const LongModInt& number1, const LongModInt& number2)
@@ -176,95 +193,94 @@ bool operator >(const LongModInt& number1, const LongModInt& number2)
 	return false;
 }
 
-bool operator >=(const LongModInt& number1, const LongModInt& number2) {
-	return (number1 > number2) || (number1 == number2);
-}
-
-//TODO operator !=
-LongModInt operator~(const LongModInt& number1)
+LongModInt LongModInt::operator~() const
 {
 	LongModInt x, y;
-	LongModInt module(number1.m);
+	LongModInt module(this->m);
 
-	LongModInt g = gcdExtended(number1, module, x, y);
+	LongModInt g = gcdExtended(*this, module, x, y);
 	if (!(g == LongModInt(1,0)))
 		std::cout << "Inverse doesn't exist";
 	else
 	{
 		if (x > module) {
-			x = intremainder(x, module);
+			x = signedMod(x, module);
 		}
 		if (x.negative) {
-			x = intsubtraction(module, -x);
+			x = signedSubtract(module, -x);
 			x.negative = false;
 		}
 		LongModInt res = x;
-		res.m = number1.m;
+		res.m = this->m;
 		return res;
 	}
 	return LongModInt(-1, 0);
 }
 
-LongModInt operator-(const LongModInt& number1)
+LongModInt LongModInt::operator-() const
 {
-	LongModInt number2 = number1;
-	number2.negative = !number1.negative;
-	return number2;
+	return LongModInt(0, this->m) - *this;
 }
 
-LongModInt operator /(const LongModInt& number1, const LongModInt& number2)
+LongModInt LongModInt::operator/(const LongModInt& number2) const
 {
+	assert(this->m == number2.m);
+
 	LongModInt x, y;
-	LongModInt module(number1.m);
+	LongModInt module(this->m);
 	LongModInt inv = ~number2;
 	if (inv == LongModInt(-1, 0)) {
 		std::cout << "Division not defined";
 		return LongModInt(-1, 0);
 	}
 	else
-		return inv * number1;
+		return inv * *this;
 }
 
-LongModInt operator *(const LongModInt& number1, const LongModInt& number2)
+LongModInt LongModInt::operator *(const LongModInt& number2) const
 {
-	if (number1.m != number2.m) return NULL;
-	LongModInt number = intmultiply(number1, number2);
-	LongModInt mod(number1.m);
-	LongModInt result = intremainder(number, mod);
-	result.m = number1.m;
+	assert(this->m == number2.m);
+
+	LongModInt number = signedMultiply(*this, number2);
+	LongModInt mod(this->m);
+	LongModInt result = signedMod(number, mod);
+	result.m = this->m;
 	return result;
 }
 
-//TODO check if module1 == module2
-LongModInt operator +(const LongModInt& number1, const LongModInt& number2)
+LongModInt LongModInt::operator +(const LongModInt& number2) const
 {
-    LongModInt number = intaddition(number1, number2);
-    LongModInt mod(number1.m);
+	assert(this->m == number2.m);
+
+    LongModInt number = signedAdd(*this, number2);
+    LongModInt mod(this->m);
     if (number >= mod) {
-		LongModInt result = intsubtraction(number, mod);
-		result.m = number1.m;
+		LongModInt result = signedSubtract(number, mod);
+		result.m = this->m;
 		return result;
     }
-	number.m = number1.m;
+	number.m = this->m;
     return number;
 }
 
-LongModInt operator -(const LongModInt& number1, const LongModInt& number2)
+LongModInt LongModInt::operator-(const LongModInt& number2) const
 {
-    if (number2 > number1) {
-        LongModInt number = intsubtraction(number1, number2);
-        LongModInt mod(number1.m);
-		LongModInt result = intaddition(number, mod);
-		result.m = number1.m;
+	assert(this->m == number2.m);
+
+    if (number2 > *this) {
+        LongModInt number = signedSubtract(*this, number2);
+        LongModInt mod(this->m);
+		LongModInt result = signedAdd(number, mod);
+		result.m = this->m;
 		return result;
     }
-	LongModInt result = intsubtraction(number1, number2);
-	result.m = number1.m;
+	LongModInt result = signedSubtract(*this, number2);
+	result.m = this->m;
 	return result;
 }
 
 
-LongModInt intmultiply(LongModInt number1, LongModInt number2)
+LongModInt LongModInt::signedMultiply(const LongModInt& number1, const LongModInt& number2)
 {
 	LongModInt result;
 	result.m = number1.m;
@@ -296,15 +312,15 @@ LongModInt intmultiply(LongModInt number1, LongModInt number2)
 	return result;
 }
 
-LongModInt intaddition(LongModInt number1, LongModInt number2)
+LongModInt LongModInt::signedAdd(LongModInt number1, LongModInt number2)
 {
     LongModInt result;
 	result.m = number1.m;
     int n1 = number1.x.size();
     int n2 = number2.x.size();
 	
-	if (number2.negative && !number1.negative) return intsubtraction(number1, -number2);
-	if (number1.negative && !number2.negative) return intsubtraction(number2, -number1);
+	if (number2.negative && !number1.negative) return signedSubtract(number1, signedNeg(number2));
+	if (number1.negative && !number2.negative) return signedSubtract(number2, signedNeg(number1));
 	
     int size = (n1 > n2 ? n1 : n2) + 1;
 	result.x.resize(size);
@@ -326,7 +342,7 @@ LongModInt intaddition(LongModInt number1, LongModInt number2)
     return result;
 }
 
-LongModInt intsubtraction (LongModInt number1, LongModInt number2)
+LongModInt LongModInt::signedSubtract (LongModInt number1, LongModInt number2)
 {
     LongModInt result;
 	result.m = number1.m;
@@ -335,9 +351,9 @@ LongModInt intsubtraction (LongModInt number1, LongModInt number2)
     int size = (n1 > n2 ? n1 : n2) + 1;
 	result.x.resize(size);
 
-	if (!number1.negative && number2.negative) return intaddition(number1, -number2);
-	if (number1.negative && !number2.negative) return -intaddition(-number1, number2);
-	if (number1.negative && number2.negative) return intsubtraction(-number2, -number1);
+	if (!number1.negative && number2.negative) return signedAdd(number1, signedNeg(number2));
+	if (number1.negative && !number2.negative) return signedNeg(signedAdd(signedNeg(number1), number2));
+	if (number1.negative && number2.negative) return signedSubtract(signedNeg(number2), signedNeg(number1));
 
 	if (number2 > number1) {
             result.negative = true;
@@ -365,7 +381,7 @@ LongModInt intsubtraction (LongModInt number1, LongModInt number2)
     return result;
 }
 
-LongModInt intremainder(LongModInt number1, LongModInt number2)
+LongModInt LongModInt::signedMod(const LongModInt& number1, const LongModInt& number2)
 {
 	//cannot divide by zero
 	if (number2.x.size() == 1 && number2.x[0] == 0) return NULL;
@@ -388,7 +404,7 @@ LongModInt intremainder(LongModInt number1, LongModInt number2)
 		while (left <= right) {
 			int m = (left + right) / 2;
 			LongModInt mod = LongModInt(m, 0);
-			LongModInt t = intmultiply(number2, mod);
+			LongModInt t = signedMultiply(number2, mod);
 			if (t <= remainder) {
 				x = m;
 				left = m + 1;
@@ -396,14 +412,14 @@ LongModInt intremainder(LongModInt number1, LongModInt number2)
 			else right = m - 1;
 		}
 		result.x[i] = x;
-		remainder = intsubtraction(remainder, intmultiply(number2, LongModInt(x, 0)));
+		remainder = signedSubtract(remainder, signedMultiply(number2, LongModInt(x, 0)));
 	}
 	result.negative = number1.negative != number2.negative;
 	result.removeZeros();
 	return remainder;
 }
 
-LongModInt intdivide(LongModInt number1, LongModInt number2)
+LongModInt LongModInt::signedDivide(const LongModInt& number1, const LongModInt& number2)
 {
 	//cannot divide by zero
 	if (number2.x.size() == 1 && number2.x[0] == 0) return NULL;
@@ -426,7 +442,7 @@ LongModInt intdivide(LongModInt number1, LongModInt number2)
 		while (left <= right) {
 			int m = (left + right) / 2;
 			LongModInt mod = LongModInt(m, 0);
-			LongModInt t = intmultiply(number2, mod);
+			LongModInt t = signedMultiply(number2, mod);
 			if (t <= remainder) {
 				x = m;
 				left = m + 1;
@@ -434,9 +450,16 @@ LongModInt intdivide(LongModInt number1, LongModInt number2)
 			else right = m - 1;
 		}
 		result.x[i] = x;
-		remainder = intsubtraction(remainder, intmultiply(number2, LongModInt(x, 0)));
+		remainder = signedSubtract(remainder, signedMultiply(number2, LongModInt(x, 0)));
 	}
 	result.negative = number1.negative != number2.negative;
 	result.removeZeros();
 	return result;
+}
+
+LongModInt LongModInt::signedNeg(const LongModInt& number1)
+{
+	LongModInt number2 = number1;
+	number2.negative = !number1.negative;
+	return number2;
 }

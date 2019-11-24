@@ -10,13 +10,40 @@ using namespace std;
 
 int main()
 {
-	LongModInt x("8", "5");
-	LongModInt y("4", "5");
+	LongModInt x("15", "17");
+	LongModInt y("13", "17");
 
 	LongModInt result = x / y;
-	cout << result << std::endl;
+	cout << x << " / " << y << " = " << result << std::endl;
 
-	/*EllipticCurve e(-25, 0);
+	result = x * y;
+	cout << x << " * " << y << " = " << result << std::endl;
+
+	result = x + y;
+	cout << x << " + " << y << " = " << result << std::endl;
+
+	result = x - y;
+	cout << x << " - " << y << " = " << result << std::endl;
+
+	result = x - y + y;
+	cout << x << " - " << y << " + " << y << " = " << result << std::endl;
+
+	result = -y;
+	cout << '-' << y << " = " << result << std::endl;
+
+	bool boolResult = x < y;
+	cout << x << " < " << y << " ? " << boolalpha << boolResult << std::endl;
+
+	boolResult = x > y;
+	cout << x << " > " << y << " ? " << boolalpha << boolResult << std::endl;
+
+	boolResult = x == y;
+	cout << x << " == " << y << " ? " << boolalpha << boolResult << std::endl;
+
+	boolResult = x <= y;
+	cout << x << " <= " << y << " ? " << boolalpha << boolResult << std::endl;
+
+	EllipticCurve e(-25, 0);
 	cout << e.add(Point(0, 0), Point(-5, 0)) << endl;
-	cout << e.add(Point(0, 0), Point(0, 0)) << endl;*/
+	cout << e.add(Point(0, 0), Point(0, 0)) << endl;
 }

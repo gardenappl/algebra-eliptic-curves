@@ -8,6 +8,7 @@ class LongModInt
 private:
 	LongModInt();
 	LongModInt(int number, int m);
+	LongModInt(int number, const std::vector<int>& m);
 	LongModInt(std::vector<int> number);
 	LongModInt(bool isInfinite);
 
@@ -19,19 +20,20 @@ private:
 	void removeZeros();
 	void shiftRight();
 	void revert(int size);
-	friend LongModInt gcdExtended(LongModInt a, LongModInt b, LongModInt& x, LongModInt& y);
-	
+	static LongModInt gcdExtended(const LongModInt& a, const LongModInt& b, LongModInt& x, LongModInt& y);
 
-	friend LongModInt intaddition(LongModInt number1, LongModInt number2);
-	friend LongModInt intsubtraction(LongModInt number1, LongModInt number2);
-	friend LongModInt intremainder(LongModInt number1, LongModInt number2);
-	friend LongModInt intdivide(LongModInt number1, LongModInt number2);
-	friend LongModInt intmultiply(LongModInt number1, LongModInt number2);
+
+	static LongModInt signedAdd(LongModInt number1, LongModInt number2);
+	static LongModInt signedSubtract(LongModInt number1, LongModInt number2);
+	static LongModInt signedMod(const LongModInt& number1, const LongModInt& number2);
+	static LongModInt signedDivide(const LongModInt& number1, const LongModInt& number2);
+	static LongModInt signedMultiply(const LongModInt& number1, const LongModInt& number2);
+	static LongModInt signedNeg(const LongModInt& number1);
 	
 
 public:
 	LongModInt(std::string str, std::string m);
-	bool isNegative() { return negative; };
+	//bool isNegative() { return negative; };
 	bool isInfinite() { return this->infinite; };
 
 
@@ -41,14 +43,16 @@ public:
 	friend bool operator <=(const LongModInt& number1, const LongModInt& number2);
 	friend bool operator >=(const LongModInt& number1, const LongModInt& number2);
 	friend bool operator ==(const LongModInt& number1, const LongModInt& number2);
+	friend bool operator !=(const LongModInt& number1, const LongModInt& number2);
 	
 
-	friend LongModInt operator ~(const LongModInt& number1);
-	friend LongModInt operator -(const LongModInt& number1);
-	friend LongModInt operator /(const LongModInt& number1, const LongModInt& number2);
-	friend LongModInt operator *(const LongModInt& number1, const LongModInt& number2);
-	friend LongModInt operator -(const LongModInt& number1, const LongModInt& number2);
-	friend LongModInt operator +(const LongModInt& number1, const LongModInt& number2);
+	// ~x is x^-1
+	LongModInt operator ~() const;
+	LongModInt operator -() const;
+	LongModInt operator /(const LongModInt& number2) const;
+	LongModInt operator *(const LongModInt& number2) const;
+	LongModInt operator -(const LongModInt& number2) const;
+	LongModInt operator +(const LongModInt& number2) const;
 
 };
 
