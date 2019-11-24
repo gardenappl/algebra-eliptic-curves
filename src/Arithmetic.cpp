@@ -2,22 +2,32 @@
 #include <string>
 #include <iostream>
 #include <cassert>
+#include <limits>
 
 const int BASE = 10;
 
 LongModInt::LongModInt(std::string str, std::string m)
 {
 	int i = 0;
-	if (str[0] == '-') {
-		negative = true;
-		i = 1;
-	}
-	else negative = false;
+
+	//Don't let users create negative integers
+	if(str[0] == '-')
+		throw std::invalid_argument("Integers can't be negative in modular arithmetic.");
+	negative = false;
+//	if (str[0] == '-') {
+//		negative = true;
+//		i = 1;
+//	}
+//	else negative = false;
+
 	x.resize(str.length());
 	for (; i < str.length(); i++) {
 		x[i] = str[i] - '0';
 	}
-	//TODO check negative module
+	if(m.empty() || (m == "0"))
+		throw std::invalid_argument("Modulo can't be 0.");
+	if(m[0] == '-')
+		throw std::invalid_argument("Modulo can't be negative.");
 	this->m.resize(m.length());
 	for (i = 0; i < m.length(); i++) {
 		this->m[i] = m[i] - '0';
@@ -37,7 +47,9 @@ LongModInt::LongModInt(std::string str, std::string m)
 	}
 }
 
-LongModInt::LongModInt(int number, int m)
+
+
+LongModInt::LongModInt(long long number, long long m)
 {
 	std::string str = std::to_string(number);
 	std::string module = std::to_string(m);
@@ -57,29 +69,54 @@ LongModInt::LongModInt(int number, int m)
 	}
 }
 
-LongModInt::LongModInt(int number, const std::vector<int>& m)
-	: m(m), negative(false)
+LongModInt::LongModInt(long long number)
+		: LongModInt(number, 0)
 {
-	x.push_back(0);
 }
 
-LongModInt::LongModInt(std::vector<int> number)
+LongModInt::LongModInt(long long number, const std::vector<int>& m)
+	: m(m)
 {
-	this->x = number;
-	this->negative = false;
-	this->infinite = false;
+	std::string str = std::to_string(number);
+	int i = 0;
+
+	//Don't let users create negative integers
+	if(str[0] == '-')
+		throw std::invalid_argument("Integers can't be negative in modular arithmetic.");
+	negative = false;
+//	if (str[0] == '-') {
+//		negative = true;
+//		i = 1;
+//	}
+//	else negative = false;
+
+	x.resize(str.length());
+	for (; i < str.length(); i++) {
+		x[i] = str[i] - '0';
+	}
+
+	LongModInt module = LongModInt(this->m);
+	LongModInt longNumber = LongModInt(this->x);
+
+	if (longNumber > module) {
+		this->x = signedMod(longNumber, module).x;
+	}
+
+	if (negative) {
+		longNumber = LongModInt(this->x);
+		this->x = signedSubtract(module, longNumber).x;
+		negative = false;
+	}
+}
+
+LongModInt::LongModInt(const std::vector<int>& number)
+	: x(number), m(std::vector<int>()), negative(false)
+{
 }
 
 LongModInt::LongModInt()
 {
 	negative = false;
-}
-
-LongModInt LongModInt::makeInfinite()
-{
-	LongModInt number;
-	number.infinite = true;
-	return number;
 }
 
 
@@ -132,6 +169,13 @@ std::ostream& operator<<(std::ostream& stream, const LongModInt& number)
 	for (int i = 0; i < number.x.size(); i++) {
 		stream << number.x[i];
 	}
+
+//	stream << "(mod ";
+//	for (int i = 0; i < number.m.size(); i++) {
+//		stream << number.m[i];
+//	}
+//	stream << ")";
+
 	return stream;
 }
 
@@ -385,7 +429,8 @@ LongModInt LongModInt::signedSubtract (LongModInt number1, LongModInt number2)
 LongModInt LongModInt::signedMod(const LongModInt& number1, const LongModInt& number2)
 {
 	//cannot divide by zero
-	if (number2.x.size() == 1 && number2.x[0] == 0) return NULL;
+	if (number2.x.size() == 1 && number2.x[0] == 0)
+		throw std::invalid_argument("Modulo can't be 0.");
 
 	int n = number1.x.size();
 	int t = number2.x.size();
@@ -404,7 +449,7 @@ LongModInt LongModInt::signedMod(const LongModInt& number1, const LongModInt& nu
 		right = BASE;
 		while (left <= right) {
 			int m = (left + right) / 2;
-			LongModInt mod = LongModInt(m, 0);
+			LongModInt mod = LongModInt(m);
 			LongModInt t = signedMultiply(number2, mod);
 			if (t <= remainder) {
 				x = m;
@@ -423,7 +468,8 @@ LongModInt LongModInt::signedMod(const LongModInt& number1, const LongModInt& nu
 LongModInt LongModInt::signedDivide(const LongModInt& number1, const LongModInt& number2)
 {
 	//cannot divide by zero
-	if (number2.x.size() == 1 && number2.x[0] == 0) return NULL;
+	if (number2.x.size() == 1 && number2.x[0] == 0)
+		throw std::invalid_argument("Can't divide by 0");
 
 	int n = number1.x.size();
 	int t = number2.x.size();
@@ -463,4 +509,59 @@ LongModInt LongModInt::signedNeg(const LongModInt& number1)
 	LongModInt number2 = number1;
 	number2.negative = !number1.negative;
 	return number2;
+}
+
+
+
+//Operators with long, for convenience
+
+LongModInt operator*(long long number, const LongModInt& number2)
+{
+	return LongModInt(number, number2.m) * number2;
+}
+
+LongModInt operator/(long long number, const LongModInt& number2)
+{
+	return LongModInt(number, number2.m) / number2;
+}
+
+LongModInt operator+(long long number, const LongModInt& number2)
+{
+	return LongModInt(number, number2.m) + number2;
+}
+
+LongModInt operator-(long long number, const LongModInt& number2)
+{
+	return LongModInt(number, number2.m) - number2;
+}
+
+
+LongModInt LongModInt::operator/(long long number2) const
+{
+	return *this / LongModInt(number2, this->m);
+}
+
+LongModInt LongModInt::operator*(long long number2) const
+{
+	return *this * LongModInt(number2, this->m);
+}
+
+LongModInt LongModInt::operator-(long long number2) const
+{
+	return *this - LongModInt(number2, this->m);
+}
+
+LongModInt LongModInt::operator+(long long number2) const
+{
+	return *this + LongModInt(number2, this->m);
+}
+
+bool LongModInt::operator==(long long number2) const
+{
+	return *this == LongModInt(number2, this->m);
+}
+
+bool LongModInt::operator!=(long long number2) const
+{
+	return *this != LongModInt(number2, this->m);
 }
