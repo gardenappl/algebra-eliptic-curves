@@ -6,7 +6,7 @@ struct binary{
   int bit;
 };
 
-LongModInt montgomeryPower(const LongModInt number1, const LongModInt number2){
+LongModInt montgomeryPower(const LongModInt& number1, const LongModInt& number2){
 
     std::vector<int> mod=number1.getMod();
     LongModInt result("1",mod),temp=number1,number=number2;
