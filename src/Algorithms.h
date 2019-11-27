@@ -1,7 +1,7 @@
 #pragma once
 #include"Arithmetic.h"
 
-LongModInt montgomeryPower(const LongModInt& , const LongModInt&);
+LongModInt pow(const LongModInt& , const LongModInt&);
 
 
 
