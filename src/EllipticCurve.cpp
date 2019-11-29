@@ -58,9 +58,17 @@ EllipticCurve::~EllipticCurve()
 Point EllipticCurve::add(const Point& p1, const Point& p2) const
 {
 	if(!isVaild(p1))
-		throw std::invalid_argument("Point 1 is not on the elliptic curve.");
+	{
+		std::stringstream ss;
+		ss << "Point " << p1 << " is not on the elliptic curve.";
+		throw std::invalid_argument(ss.str());
+	}
 	if(!isVaild(p2))
-		throw std::invalid_argument("Point 2 is not on the elliptic curve.");
+	{
+		std::stringstream ss;
+		ss << "Point " << p2 << " is not on the elliptic curve.";
+		throw std::invalid_argument(ss.str());
+	}
 	if(p1.isInfinite())
 		return p2;
 	if(p2.isInfinite())
@@ -110,5 +118,5 @@ Point EllipticCurve::invert(const Point &p) const
 
 bool EllipticCurve::isVaild(const Point &p) const
 {
-	return p.y * p.y == p.x * p.x * p.x + a * p.x + b;
+	return p.isInfinite() || p.y * p.y == p.x * p.x * p.x + a * p.x + b;
 }
