@@ -1,5 +1,5 @@
 #pragma once
-#include"Arithmetic.h"
+#include"ModArithmetic.h"
 
 LongModInt pow(const LongModInt& , const LongModInt&);
 

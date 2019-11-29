@@ -3,15 +3,17 @@
 
 #include <iostream>
 #include <cmath>
-#include "Arithmetic.h"
+#include "ModArithmetic.h"
 #include "EllipticCurve.h"
+#include "Algorithms.h"
 
 using namespace std;
 
 int main()
 {
-	LongModInt x("2", "17");
-	LongModInt y("13", "17");
+	ModField f(LongInt("17"));
+	LongModInt x("2", &f);
+	LongModInt y("13", &f);
 
 	LongModInt result = x - y;
 	cout << x << " - " << y << " = " << result << std::endl;
@@ -43,5 +45,9 @@ int main()
 	//y^2 = x^3 + 3x + 5 (mod 7)
 	EllipticCurve e("3", "5", "7");
 	cout << e.add({"1", "4"}, {"1", "4"}) << endl;
+
+	result = pow(x, y);
+	cout << x << " ^ " << y << " = " << result << std::endl;
+
 	cout << e.add({"0", "0"}, {"0", "0"}) << endl;
 }

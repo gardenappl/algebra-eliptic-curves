@@ -38,22 +38,21 @@ ostream& operator<<(ostream& os, const Point& p)
 }
 
 
-EllipticCurve::EllipticCurve(const LongModInt& a, const LongModInt& b)
-	: a(a), b(b)
+EllipticCurve::EllipticCurve(const LongInt& a, const LongInt& b, const LongInt& mod)
+	: field(new ModField(LongInt(mod))), a(a, field), b(b, field)
 {
-	if(!LongModInt::checkEqualMods(a, b))
-		throw std::invalid_argument("Moduli must be equal.");
-
-	if("4" * a * a * a + "27" * b * b == "0")
+	if("4" * this->a * this->a * this->a + "27" * this->b * this->b == "0")
 		throw std::invalid_argument("Discriminant must be not equal to 0");
 }
 
 
 EllipticCurve::EllipticCurve(const std::string& a, const std::string& b, const std::string& mod)
-		: a(LongModInt(a, mod)), b(LongModInt(b, mod))
+	: EllipticCurve(LongInt(a), LongInt(b), LongInt(mod))
+{}
+
+EllipticCurve::~EllipticCurve()
 {
-	if("4" * this->a * this->a * this->a + "27" * this->b * this->b == "0")
-		throw std::invalid_argument("Discriminant must be not equal to 0");
+	delete field;
 }
 
 Point EllipticCurve::add(const Point& p1, const Point& p2) const
@@ -96,8 +95,8 @@ Point EllipticCurve::add(const Point& p1, const Point& p2) const
 Point EllipticCurve::add(const std::pair<std::string, std::string> &p1,
                          const std::pair<std::string, std::string> &p2) const
 {
-	Point point1(LongModInt(p1.first, a.getMod()), LongModInt(p1.second, a.getMod()));
-	Point point2(LongModInt(p2.first, a.getMod()), LongModInt(p2.second, a.getMod()));
+	Point point1(LongModInt(p1.first, field), LongModInt(p1.second, field));
+	Point point2(LongModInt(p2.first, field), LongModInt(p2.second, field));
 	return add(point1, point2);
 }
 

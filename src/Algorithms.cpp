@@ -8,12 +8,15 @@ struct binary{
 
 LongModInt pow(const LongModInt& number1, const LongModInt& number2){
 
-    std::vector<int> mod=number1.getMod();
-    LongModInt result("1",mod),temp=number1,number=number2;
+	if(number1.getField()->mod != number2.getField()->mod)
+		throw std::invalid_argument("Moduli must be equal.");
+
+    LongModInt result(LongInt("1"), number1.getField()),temp=number1,number=number2;
     const int bits=8;
-    int length=mod.size()*bits;
+    LongInt mod=number1.getField()->mod;
+    int length=mod.getSize()*bits;
     std::vector<binary>number2bin; number2bin.resize(length);
-    LongModInt order("2",mod),degree("1",mod);
+    LongModInt order("2",number1.getField()),degree("1",number1.getField());
     int breakpoint=0;
 
     for(int i(length-1);i>=0;i--){
