@@ -11,7 +11,7 @@ using namespace std;
 
 int main()
 {
-	ModField f(LongInt("17"));
+	ModField f("17");
 	LongModInt x("2", &f);
 	LongModInt y("13", &f);
 

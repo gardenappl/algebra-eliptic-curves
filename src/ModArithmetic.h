@@ -12,6 +12,7 @@ struct ModField
 	LongInt mod;
 
 	ModField(const LongInt& mod);
+	ModField(const std::string& str);
 };
 
 class LongModInt

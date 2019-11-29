@@ -4,8 +4,12 @@
 #include <cassert>
 #include <limits>
 
-ModField::ModField(const LongInt &mod)
+ModField::ModField(const LongInt& mod)
 	: mod(mod)
+{}
+
+ModField::ModField(const std::string& str)
+	: mod(str)
 {}
 
 LongModInt::LongModInt()
@@ -97,12 +101,7 @@ LongModInt LongModInt::operator-(const LongModInt& number2) const
 		throw std::invalid_argument("Moduli must be equal.");
 
     if (number2 > *this)
-    {
-    	std::cout << "(" << num - number2.num << ")";
-	    std::cout << "(" << field->mod << ")";
-	    std::cout << "(" << num - number2.num + field->mod << ")";
 	    return LongModInt(num - number2.num + field->mod, field);
-    }
     else
 		return LongModInt(num - number2.num, field);
 }
