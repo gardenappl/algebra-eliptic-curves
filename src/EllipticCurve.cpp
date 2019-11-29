@@ -59,9 +59,17 @@ EllipticCurve::EllipticCurve(const std::string& a, const std::string& b, const s
 Point EllipticCurve::add(const Point& p1, const Point& p2) const
 {
 	if(!isVaild(p1))
-		throw std::invalid_argument("Point 1 is not on the elliptic curve.");
+	{
+		std::stringstream ss;
+		ss << "Point " << p1 << " is not on the elliptic curve.";
+		throw std::invalid_argument(ss.str());
+	}
 	if(!isVaild(p2))
-		throw std::invalid_argument("Point 2 is not on the elliptic curve.");
+	{
+		std::stringstream ss;
+		ss << "Point " << p2 << " is not on the elliptic curve.";
+		throw std::invalid_argument(ss.str());
+	}
 	if(p1.isInfinite())
 		return p2;
 	if(p2.isInfinite())

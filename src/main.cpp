@@ -43,5 +43,12 @@ int main()
 	//y^2 = x^3 + 3x + 5 (mod 7)
 	EllipticCurve e("3", "5", "7");
 	cout << e.add({"1", "4"}, {"1", "4"}) << endl;
-	cout << e.add({"0", "0"}, {"0", "0"}) << endl;
+
+	try {
+		cout << e.add({"0", "0"}, {"0", "0"}) << endl;
+	}
+	catch(std::invalid_argument e)
+	{
+		cout << e.what() << endl;
+	}
 }
