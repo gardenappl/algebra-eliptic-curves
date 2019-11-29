@@ -111,5 +111,5 @@ Point EllipticCurve::invert(const Point &p) const
 
 bool EllipticCurve::isVaild(const Point &p) const
 {
-	return p.y * p.y == p.x * p.x * p.x + a * p.x + b;
+	return p.isInfinite() || p.y * p.y == p.x * p.x * p.x + a * p.x + b;
 }
