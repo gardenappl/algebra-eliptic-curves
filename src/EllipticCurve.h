@@ -2,7 +2,7 @@
 
 #include <limits>
 #include <iostream>
-#include "Arithmetic.h"
+#include "ModArithmetic.h"
 
 using namespace std;
 
@@ -27,13 +27,16 @@ public:
 //Weierstrass equation: y^2 = x^3 + Ax + B
 class EllipticCurve
 {
+	ModField* field;
+
 	LongModInt a;
 	LongModInt b;
 
 public:
 	//to-do: check if modulo is prime?
-	EllipticCurve(const LongModInt& a, const LongModInt& b);
+	EllipticCurve(const LongInt& a, const LongInt& b, const LongInt& mod);
 	EllipticCurve(const std::string& a, const std::string& b, const std::string& mod);
+	~EllipticCurve();
 
 	Point add(const Point& p1, const Point& p2) const;
 	Point add(const std::pair<std::string, std::string>& p1, const std::pair<std::string, std::string>& p2) const;
