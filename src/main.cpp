@@ -1,7 +1,4 @@
-// Long modular arithmetic.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-#include <iostream>
+﻿#include <iostream>
 #include <cmath>
 #include "ModArithmetic.h"
 #include "EllipticCurve.h"
@@ -50,21 +47,14 @@ int main()
 
 	result = pow(x, y);
 	cout << x << " ^ " << y << " = " << result << std::endl;
-  
+
 	//y^2 = x^3 + 3x + 5 (mod 7)
 	ModField eField("7");
 	EllipticCurve e("3", "5", &eField);
-	cout << e.add({"1", "4"}, {"1", "4"}) << endl;
 
-	cout << e.add({"6", "1"}, {"4", "5"}) << endl;
-	cout << e.add({"4", "5"}, {"6", "1"}) << endl;
+	cout << e.add({ "1", "3" }, { "1", "4" }) << endl;
+//	cout << e.add({ "6", "1" }, { "1", "4" }) << endl;
+//	cout << e.add({ "1", "4" }, { "6", "1" }) << endl;
 
-	try
-	{
-		cout << e.add({"0", "0"}, {"0", "0"}) << endl;
-	}
-	catch(std::invalid_argument e)
-	{
-		cout << e.what() << endl;
-	}
+	cout << e.integerTimesPoint({ "1", "4" }, 13);
 }

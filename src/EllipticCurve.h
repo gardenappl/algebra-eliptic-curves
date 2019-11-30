@@ -1,5 +1,4 @@
 #pragma once
-
 #include <limits>
 #include <iostream>
 #include "ModArithmetic.h"
@@ -8,9 +7,6 @@ using namespace std;
 
 struct Point
 {
-private:
-	bool infinite = false;
-
 public:
 	LongModInt x;
 	LongModInt y;
@@ -18,7 +14,7 @@ public:
 	Point() = default;
 	Point(const LongModInt& x, const LongModInt& y);
 	static Point makeInfinite(); //"constructor" for infinite point
-
+	bool infinite = false;
 	bool isInfinite() const;
 	bool operator==(const Point& p);
 	friend ostream& operator<<(ostream& os, const Point& p);
@@ -41,4 +37,6 @@ public:
 	Point add(const std::pair<std::string, std::string>& p1, const std::pair<std::string, std::string>& p2) const;
 	Point invert(const Point& p) const;
 	bool isVaild(const Point& p) const;
+	Point integerTimesPoint(const Point& p, int k);
+	Point integerTimesPoint(const pair<string, string>& p, int k);
 };
