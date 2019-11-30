@@ -38,22 +38,17 @@ ostream& operator<<(ostream& os, const Point& p)
 }
 
 
-EllipticCurve::EllipticCurve(const LongInt& a, const LongInt& b, const LongInt& mod)
-	: field(new ModField(LongInt(mod))), a(a, field), b(b, field)
+EllipticCurve::EllipticCurve(const LongInt& a, const LongInt& b, ModField* field)
+	: field(field), a(a, field), b(b, field)
 {
 	if("4" * this->a * this->a * this->a + "27" * this->b * this->b == "0")
 		throw std::invalid_argument("Discriminant must be not equal to 0");
 }
 
 
-EllipticCurve::EllipticCurve(const std::string& a, const std::string& b, const std::string& mod)
-	: EllipticCurve(LongInt(a), LongInt(b), LongInt(mod))
+EllipticCurve::EllipticCurve(const std::string& a, const std::string& b, ModField* field)
+	: EllipticCurve(LongInt(a), LongInt(b), field)
 {}
-
-EllipticCurve::~EllipticCurve()
-{
-	delete field;
-}
 
 Point EllipticCurve::add(const Point& p1, const Point& p2) const
 {

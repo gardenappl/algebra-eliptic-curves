@@ -2,6 +2,7 @@
 // Created by yurik on 29.11.2019.
 //
 
+#include <iostream>
 #include "LongInt.h"
 
 
@@ -24,6 +25,8 @@ LongInt::LongInt(const std::string& str)
 	for (; i < str.length(); i++) {
 		x[i] = str[i] - '0';
 	}
+
+	removeZeros();
 }
 
 
@@ -79,13 +82,19 @@ LongInt LongInt::gcdExtended(const LongInt& a, const LongInt& b, LongInt& x, Lon
 	}
 	LongInt x1, y1;
 	LongInt gcd = gcdExtended(b % a, a, x1, y1);
-	x = y1 - b / a * x1;
+	x = y1 - (b / a) * x1;
 	y = x1;
 	return gcd;
 }
 
 std::ostream& operator<<(std::ostream& stream, const LongInt& number)
 {
+	if(number.x.empty())
+	{
+		stream << '0';
+		return stream;
+	}
+
 	if (number.negative) stream << '-';
 	for (int i = 0; i < number.x.size(); i++) {
 		stream << number.x[i];
@@ -96,15 +105,13 @@ std::ostream& operator<<(std::ostream& stream, const LongInt& number)
 
 bool operator <(const LongInt& number1, const LongInt& number2)
 {
-	if (number1 == number2) return false;
-
 	if (number1.negative && !number2.negative)
 		return true;
 
 	if (!number1.negative && number2.negative)
 		return false;
 
-	if (number1.negative && number2.negative) return number2 < number1;
+	if (number1.negative && number2.negative) return !(-number1 < -number2) && number1 != number2;
 
 	if (number1.x.size() != number2.x.size()) return number1.x.size() < number2.x.size();
 
@@ -136,21 +143,40 @@ bool operator ==(const LongInt& number1, const LongInt& number2)
 
 bool operator !=(const LongInt& number1, const LongInt& number2)
 {
-	return !(number1 == number2);
+	if (number1.negative != number2.negative) return true;
+	if (number1.x.size() != number2.x.size()) return true;
+	for (int i = 0; i < number1.x.size(); i++)
+		if (number1.x[i] != number2.x[i]) return true;
+	return false;
 }
 
 bool operator >(const LongInt& number1, const LongInt& number2)
 {
-	if (number1.x.size() < number2.x.size())
+	if (number1.negative && !number2.negative)
 		return false;
-	if (number1.x.size() > number2.x.size())
+
+	if (!number1.negative && number2.negative)
 		return true;
-	for (int i = 0; i < number2.x.size(); i++)
-		if (number1.x[i] < number2.x[i])
-			return false;
-		else if (number1.x[i] > number2.x[i])
-			return true;
+
+	if (number1.negative && number2.negative) return !(-number1 > -number2) && number1 != number2;
+
+	if (number1.x.size() != number2.x.size()) return number1.x.size() > number2.x.size();
+
+	//they have the same array sizes
+	for (int j = 0; j < number1.x.size(); j++)
+		if (number1.x[j] != number2.x[j]) return number1.x[j] > number2.x[j];
+
 	return false;
+//	if (number1.x.size() < number2.x.size())
+//		return false;
+//	if (number1.x.size() > number2.x.size())
+//		return true;
+//	for (int i = 0; i < number2.x.size(); i++)
+//		if (number1.x[i] < number2.x[i])
+//			return false;
+//		else if (number1.x[i] > number2.x[i])
+//			return true;
+//	return false;
 }
 
 
@@ -222,19 +248,18 @@ LongInt LongInt::operator-(LongInt number2) const
 	LongInt result;
 	if (number2 > number1) {
 		result.negative = true;
-		LongInt temp = number1;
 		number1 = number2;
-		number2 = temp;
+		number2 = *this;
 	}
+
+	if (!number1.negative && number2.negative) return number1 + (-number2);
+	if (number1.negative && !number2.negative) return -((-number1) + number2);
+	if (number1.negative && number2.negative) return (-number2) - (-number1);
 
 	int n1 = number1.x.size();
 	int n2 = number2.x.size();
 	int size = (n1 > n2 ? n1 : n2) + 1;
 	result.x.resize(size);
-
-	if (!number1.negative && number2.negative) return number1 + (-number2);
-	if (number1.negative && !number2.negative) return -((-number1) + number2);
-	if (number1.negative && number2.negative) return (-number2) - (-number1);
 
 	if (number1.x.size() > 1) number1.revert(n1);
 	if (number2.x.size() > 1) number2.revert(n2);

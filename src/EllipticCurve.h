@@ -34,9 +34,8 @@ class EllipticCurve
 
 public:
 	//to-do: check if modulo is prime?
-	EllipticCurve(const LongInt& a, const LongInt& b, const LongInt& mod);
-	EllipticCurve(const std::string& a, const std::string& b, const std::string& mod);
-	~EllipticCurve();
+	EllipticCurve(const LongInt& a, const LongInt& b, ModField* mod);
+	EllipticCurve(const std::string& a, const std::string& b, ModField* mod);
 
 	Point add(const Point& p1, const Point& p2) const;
 	Point add(const std::pair<std::string, std::string>& p1, const std::pair<std::string, std::string>& p2) const;
