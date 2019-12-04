@@ -257,27 +257,30 @@ LongInt LongInt::operator-(LongInt number2) const
 		number1 = number2;
 		number2 = *this;
 	}
-
 	int n1 = number1.x.size();
 	int n2 = number2.x.size();
+
 	int size = (n1 > n2 ? n1 : n2) + 1;
 	result.x.resize(size);
 
 	if (number1.x.size() > 1) number1.revert(n1);
 	if (number2.x.size() > 1) number2.revert(n2);
 
+	int add = 0;
 	int c = 0;
 	for (int i = 0; i < size - 1; i++) {
-		int number = (i < number2.x.size() ? number2.x[i] : 0);
+		int number = (i < n2 ? number2.x[i] : 0);
 		if (number1.x[i] + c >= number) {
 			result.x[i] = number1.x[i] + c - number;
 			c = 0;
 		}
 		else {
-			result.x[i] = BASE + number1.x[i] + c - number2.x[i];
+			if (i >= n2) add = 0; else add = number2.x[i];
+			result.x[i] = BASE + number1.x[i] + c - add;
 			c = -1;
 		}
 	}
+	number2.removeZeros();
 	result.revert(size);
 	result.removeZeros();
 	return result;

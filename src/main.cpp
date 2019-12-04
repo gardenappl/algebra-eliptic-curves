@@ -19,10 +19,10 @@ int main()
 
 
 	ModField f("121");
-	LongModInt x("12", &f);
-	LongModInt y("10", &f);
+	LongInt x("8700");
+	LongInt y("1");
 
-	LongModInt result = ~x;
+	LongInt result = x-y;
 	cout << result;
 
 //	LongModInt result = x - y;
