@@ -298,7 +298,8 @@ LongInt LongInt::operator%(const LongInt& number2) const
 	result.x.resize(n);
 
 	for (int i = 0; i < this->x.size(); i++) {
-		remainder.x.push_back(this->x[i]);
+		if (remainder.x.size() == 1 && remainder.x[0] == 0) remainder.x[0] = this->x[i];
+		else remainder.x.push_back(this->x[i]);
 		x = 0;
 		left = 0;
 		right = BASE;
@@ -335,7 +336,8 @@ LongInt LongInt::operator/(const LongInt& number2) const
 	result.x.resize(n);
 
 	for (int i = 0; i < this->x.size(); i++) {
-		remainder.x.push_back(this->x[i]);
+		if (remainder.x.size() == 1 && remainder.x[0] == 0) remainder.x[0] = this->x[i]; 
+		else remainder.x.push_back(this->x[i]);
 		x = 0;
 		left = 0;
 		right = BASE;
