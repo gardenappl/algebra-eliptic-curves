@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <cmath>
 #include "ModArithmetic.h"
 #include "EllipticCurve.h"
@@ -57,4 +57,6 @@ int main()
 //	cout << e.add({ "1", "4" }, { "6", "1" }) << endl;
 
 	cout << e.integerTimesPoint({ "1", "4" }, 13);
+
+	eulerCarmichaelTest();
 }
