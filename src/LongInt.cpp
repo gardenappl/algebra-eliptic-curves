@@ -217,8 +217,10 @@ LongInt LongInt::operator+(LongInt number2) const
 	int n1 = this->x.size();
 	int n2 = number2.x.size();
 
+
 	if (number2.negative && !this->negative) return *this - (-number2);
 	if (this->negative && !number2.negative) return number2 - -(*this);
+	if (this->negative && number2.negative) result.negative = true;
 
 	LongInt number1 = *this;
 
@@ -244,6 +246,10 @@ LongInt LongInt::operator+(LongInt number2) const
 
 LongInt LongInt::operator-(LongInt number2) const
 {
+	if (!this->negative && number2.negative) return (*this + (-number2));
+	if (this->negative && !number2.negative) return -((-*this) + number2);
+	if (this->negative && number2.negative) return (-number2) - (-*this);
+
 	LongInt number1 = *this;
 	LongInt result;
 	if (number2 > number1) {
@@ -251,10 +257,6 @@ LongInt LongInt::operator-(LongInt number2) const
 		number1 = number2;
 		number2 = *this;
 	}
-
-	if (!number1.negative && number2.negative) return number1 + (-number2);
-	if (number1.negative && !number2.negative) return -((-number1) + number2);
-	if (number1.negative && number2.negative) return (-number2) - (-number1);
 
 	int n1 = number1.x.size();
 	int n2 = number2.x.size();
@@ -325,7 +327,7 @@ LongInt LongInt::operator/(const LongInt& number2) const
 		throw std::invalid_argument("Can't divide by 0");
 
 	int n = this->x.size();
-	int t = number2.x.size();
+	//int t = number2.x.size();
 	LongInt result, remainder;
 	int x = 0;
 	int left = 0;

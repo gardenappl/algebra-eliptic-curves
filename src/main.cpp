@@ -8,6 +8,18 @@ using namespace std;
 
 int main()
 {
+	LongInt a("2");
+	LongInt b("-45");
+	cout << (a - b) << std::endl;
+	cout << (b - a) << std::endl;
+	cout << (a + b) << std::endl;
+
+	LongInt c("21");
+	LongInt d("3");
+	cout << (d / c) << std::endl;
+	cout << (c / d) << std::endl;
+
+
 	ModField f("7");
 	LongModInt x("5", &f);
 	LongModInt y("4", &f);
