@@ -2,10 +2,22 @@
 #include <iostream>
 #include"Algorithms.h"
 
+
 struct binary{
   LongModInt order;
   int bit;
 };
+
+struct FactorizationStruct {
+	LongModInt factor;
+	LongModInt power;
+};
+
+std::vector<FactorizationStruct> naiveFactorization(LongModInt) {
+	// TODO
+	std::vector<FactorizationStruct> result{};
+	return result;
+}
 
 LongModInt pow(const LongModInt& number1, const LongModInt& number2){
 
@@ -125,4 +137,26 @@ void eulerCarmichaelTest(){ // test case for above program
 	else std::cout << "Number is not Charmichael" << std::endl;
 	if(isCarmichaelNumber(2000) && !is_prime(2000)) std::cout << "2000 is Charmichael number" << std::endl;
 	else std::cout << "Number is not Charmichael" << std::endl;
+}
+
+LongModInt determineGroupElementOrder(MultiplicativeGroupModN* const group, LongModInt groupElement) {
+	// FIX IT: LNK every time try to getOrder()
+	// LongModInt t = group->getOrder();
+	LongModInt t = groupElement;
+	LongModInt neutralElement("1", t.getField());
+	LongModInt a;
+
+	std::vector<FactorizationStruct> primeFactorization = naiveFactorization(t);
+	int factorizationLength = primeFactorization.size();
+	
+	for (int i = 0; i < factorizationLength; i++) {
+		t = t / pow(primeFactorization[i].factor, primeFactorization[i].power);
+		a = pow(groupElement, t);
+		while (a != neutralElement) {
+			a = pow(a, primeFactorization[i].factor);
+			t = t * primeFactorization[i].factor;
+		}
+	}
+
+	return t;
 }
