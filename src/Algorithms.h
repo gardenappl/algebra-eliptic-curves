@@ -1,5 +1,6 @@
 #pragma once
 #include"ModArithmetic.h"
+#include "MultiplicativeGroupModN.h"
 
 struct binary {
 	LongModInt order;

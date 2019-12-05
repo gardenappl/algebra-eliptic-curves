@@ -3,6 +3,17 @@
 #include<string>
 #include"Algorithms.h"
 
+struct FactorizationStruct {
+	LongModInt factor;
+	LongModInt power;
+};
+
+std::vector<FactorizationStruct> naiveFactorization(LongModInt) {
+	// TODO
+	std::vector<FactorizationStruct> result{};
+	return result;
+}
+
 std::vector<binary> exponent(LongModInt number,int&breakpoint,int&length) {
 
 	const int bits = 8;
@@ -145,6 +156,32 @@ LongModInt pow(const LongModInt& number1, const LongModInt& number2) {
 	}
 
 	return result;
+}
+
+
+//////////////////////////
+
+
+LongModInt determineGroupElementOrder(MultiplicativeGroupModN* const group, LongModInt groupElement) {
+	// FIX IT: LNK every time try to getOrder()
+	// LongModInt t = group->getOrder();
+	LongModInt t = groupElement;
+	LongModInt neutralElement("1", t.getField());
+	LongModInt a;
+
+	std::vector<FactorizationStruct> primeFactorization = naiveFactorization(t);
+	int factorizationLength = primeFactorization.size();
+	
+	for (int i = 0; i < factorizationLength; i++) {
+		t = t / pow(primeFactorization[i].factor, primeFactorization[i].power);
+		a = pow(groupElement, t);
+		while (a != neutralElement) {
+			a = pow(a, primeFactorization[i].factor);
+			t = t * primeFactorization[i].factor;
+		}
+	}
+
+	return t;
 }
 
 
