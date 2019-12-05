@@ -13,8 +13,8 @@ MultiplicativeGroupModN::MultiplicativeGroupModN(int modulo) {
 	order = new LongModInt(std::to_string(elements.size()), &n);
 }
 
-LongModInt* MultiplicativeGroupModN::getOrder() {
-	return order;
+LongModInt MultiplicativeGroupModN::getOrder() {
+	return *order;
 }
 
 std::ostream& operator<<(std::ostream& stream, const MultiplicativeGroupModN& group)

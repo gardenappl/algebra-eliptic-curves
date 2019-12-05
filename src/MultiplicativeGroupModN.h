@@ -13,7 +13,7 @@ private:
 
 public:
 	MultiplicativeGroupModN(int modulo);
-	LongModInt* getOrder();
+	LongModInt getOrder();
 
 	friend std::ostream& operator <<(std::ostream& stream, const MultiplicativeGroupModN& group);
 };
