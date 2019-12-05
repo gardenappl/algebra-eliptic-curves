@@ -16,3 +16,11 @@ MultiplicativeGroupModN::MultiplicativeGroupModN(int modulo) {
 LongModInt* MultiplicativeGroupModN::getOrder() {
 	return order;
 }
+
+std::ostream& operator<<(std::ostream& stream, const MultiplicativeGroupModN& group)
+{
+	for (LongModInt* element : group.elements) {
+		cout << *element;
+	}
+	return stream;
+}
