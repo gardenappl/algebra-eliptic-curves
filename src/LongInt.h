@@ -33,6 +33,8 @@ public:
 	friend bool operator !=(const LongInt& number1, const LongInt& number2);
 
 	int getSize() const;
+	std::vector<int> getNumber() const;
+	std::vector<int> getX() const;
 	static LongInt gcdExtended(const LongInt& a, const LongInt& b, LongInt& x, LongInt& y);
 	LongInt operator -() const;
 	LongInt operator /(const LongInt& number2) const;

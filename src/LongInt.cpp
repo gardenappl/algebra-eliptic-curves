@@ -217,8 +217,10 @@ LongInt LongInt::operator+(LongInt number2) const
 	int n1 = this->x.size();
 	int n2 = number2.x.size();
 
+
 	if (number2.negative && !this->negative) return *this - (-number2);
 	if (this->negative && !number2.negative) return number2 - -(*this);
+	if (this->negative && number2.negative) result.negative = true;
 
 	LongInt number1 = *this;
 
@@ -244,6 +246,10 @@ LongInt LongInt::operator+(LongInt number2) const
 
 LongInt LongInt::operator-(LongInt number2) const
 {
+	if (!this->negative && number2.negative) return (*this + (-number2));
+	if (this->negative && !number2.negative) return -((-*this) + number2);
+	if (this->negative && number2.negative) return (-number2) - (-*this);
+
 	LongInt number1 = *this;
 	LongInt result;
 	if (number2 > number1) {
@@ -251,31 +257,30 @@ LongInt LongInt::operator-(LongInt number2) const
 		number1 = number2;
 		number2 = *this;
 	}
-
-	if (!number1.negative && number2.negative) return number1 + (-number2);
-	if (number1.negative && !number2.negative) return -((-number1) + number2);
-	if (number1.negative && number2.negative) return (-number2) - (-number1);
-
 	int n1 = number1.x.size();
 	int n2 = number2.x.size();
+
 	int size = (n1 > n2 ? n1 : n2) + 1;
 	result.x.resize(size);
 
 	if (number1.x.size() > 1) number1.revert(n1);
 	if (number2.x.size() > 1) number2.revert(n2);
 
+	int add = 0;
 	int c = 0;
 	for (int i = 0; i < size - 1; i++) {
-		int number = (i < number2.x.size() ? number2.x[i] : 0);
+		int number = (i < n2 ? number2.x[i] : 0);
 		if (number1.x[i] + c >= number) {
 			result.x[i] = number1.x[i] + c - number;
 			c = 0;
 		}
 		else {
-			result.x[i] = BASE + number1.x[i] + c - number2.x[i];
+			if (i >= n2) add = 0; else add = number2.x[i];
+			result.x[i] = BASE + number1.x[i] + c - add;
 			c = -1;
 		}
 	}
+	number2.removeZeros();
 	result.revert(size);
 	result.removeZeros();
 	return result;
@@ -296,7 +301,8 @@ LongInt LongInt::operator%(const LongInt& number2) const
 	result.x.resize(n);
 
 	for (int i = 0; i < this->x.size(); i++) {
-		remainder.x.push_back(this->x[i]);
+		if (remainder.x.size() == 1 && remainder.x[0] == 0) remainder.x[0] = this->x[i];
+		else remainder.x.push_back(this->x[i]);
 		x = 0;
 		left = 0;
 		right = BASE;
@@ -325,7 +331,7 @@ LongInt LongInt::operator/(const LongInt& number2) const
 		throw std::invalid_argument("Can't divide by 0");
 
 	int n = this->x.size();
-	int t = number2.x.size();
+	//int t = number2.x.size();
 	LongInt result, remainder;
 	int x = 0;
 	int left = 0;
@@ -333,7 +339,8 @@ LongInt LongInt::operator/(const LongInt& number2) const
 	result.x.resize(n);
 
 	for (int i = 0; i < this->x.size(); i++) {
-		remainder.x.push_back(this->x[i]);
+		if (remainder.x.size() == 1 && remainder.x[0] == 0) remainder.x[0] = this->x[i]; 
+		else remainder.x.push_back(this->x[i]);
 		x = 0;
 		left = 0;
 		right = BASE;
@@ -370,4 +377,14 @@ bool LongInt::isNegative() const
 int LongInt::getSize() const
 {
 	return x.size();
+}
+
+std::vector<int> LongInt::getNumber() const
+{
+	return x;
+}
+
+std::vector<int> LongInt::getX() const
+{
+  return x;
 }

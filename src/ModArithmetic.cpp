@@ -201,3 +201,8 @@ ModField* LongModInt::getField() const
 {
 	return field;
 }
+
+std::vector<int> LongModInt::getNumber() const
+{
+	return this->num.getNumber();
+}

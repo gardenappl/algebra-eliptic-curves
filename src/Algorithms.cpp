@@ -1,12 +1,7 @@
-#include<vector>
 #include <iostream>
+#include<vector>
+#include<string>
 #include"Algorithms.h"
-
-
-struct binary{
-  LongModInt order;
-  int bit;
-};
 
 struct FactorizationStruct {
 	LongModInt factor;
@@ -19,43 +14,175 @@ std::vector<FactorizationStruct> naiveFactorization(LongModInt) {
 	return result;
 }
 
-LongModInt pow(const LongModInt& number1, const LongModInt& number2){
+std::vector<binary> exponent(LongModInt number,int&breakpoint,int&length) {
 
-	if(number1.getField()->mod != number2.getField()->mod)
-		throw std::invalid_argument("Moduli must be equal.");
+	const int bits = 8;
+	LongInt mod = number.getField()->mod;
+	length = mod.getSize() * bits;
+	std::vector<binary>numberbin; numberbin.resize(length);
+	LongModInt order("2", number.getField()), degree("1", number.getField());
 
-    LongModInt result(LongInt("1"), number1.getField()),temp=number1,number=number2;
-    const int bits=8;
-    LongInt mod=number1.getField()->mod;
-    int length=mod.getSize()*bits;
-    std::vector<binary>number2bin; number2bin.resize(length);
-    LongModInt order("2",number1.getField()),degree("1",number1.getField());
-    int breakpoint=0;
+	for (int i(length - 1); i >= 0; i--) {
+		numberbin[i].order = degree;
+		degree = degree * order;
+		numberbin[i].bit = 0;
+	}
 
-    for(int i(length-1);i>=0;i--){
-        number2bin[i].order=degree;
-        degree=degree*order;
-        number2bin[i].bit=0;
-    }
+	for (int i(length - 1); i > 0; i--) {
+		if (numberbin[i].order > numberbin[i - 1].order) {
+			breakpoint = i;
+			break;
+		}
+	}
 
-    for(int i(length-1);i>0;i--){
-        if(number2bin[i].order>number2bin[i-1].order){
-            breakpoint=i;
-                break;}
-        }
+	for (int i(breakpoint); i < length; i++)
+		if (numberbin[i].order <= number) {
+			numberbin[i].bit++;
+			number = number - numberbin[i].order;
+		}
 
-    for(int i(breakpoint);i<length;i++)
-        if(number2bin[i].order<=number){
-            number2bin[i].bit++;
-            number=number-number2bin[i].order;
-    }
-    for(int i(length-1);i>=breakpoint;i--){
-        if(number2bin[i].bit) result=result*temp;
-            temp=temp*temp;
-    }
-    return result;
+	return numberbin;
 }
 
+
+bool isCoprime(const LongModInt& number1)
+{
+	std::vector<int> mod = number1.getField()->mod.getNumber();
+
+	int length = number1.getField()->mod.getSize(), lastnum = mod[length - 1];
+
+	if (lastnum == 0 || lastnum == 5)
+		return false;
+
+	return true;
+}
+
+LongModInt mont(const LongModInt& number, const LongInt& r) {
+
+	LongModInt tmpr(r, number.getField());
+
+	return number * tmpr;
+}
+std::string convert(std::vector<int>x) {
+
+	std::string res_str;
+
+	int size = x.size();
+	res_str.resize(size);
+
+	for (int i(0); i < size; i++) {
+		res_str[i] = x[i] + '0';
+	}
+
+	return res_str;
+}
+
+LongInt LongModInt_to_LongInt(const LongModInt&x) {
+
+	int size = x.getNumber().size();
+
+	std::string res_str = convert(x.getNumber());
+
+	LongInt res(res_str);
+
+	return res;
+}
+LongInt inverse(const LongInt& x,const LongModInt&number) {
+
+	LongModInt temp(x,number.getField());
+	temp = ~temp;
+
+	LongInt res = LongModInt_to_LongInt(temp);
+
+	return res;
+}
+LongInt modR(const LongInt&x, const LongInt&r) {
+
+	std::vector<int> x_vec = x.getNumber();
+
+	int rsize = r.getSize(), xsize = x.getSize();
+	std::vector<int> res_vec(x_vec.begin() + (xsize - rsize + 1), x_vec.end());
+	std::string res_str = convert(res_vec);
+	LongInt res(res_str);
+
+	return res;
+}
+LongModInt montgomeryMltpl(const LongModInt& number1, const LongModInt& number2, const LongInt& r,const LongInt&k,const LongInt&N) {
+
+	LongInt num1 = LongModInt_to_LongInt(number1), num2 = LongModInt_to_LongInt(number2);
+	LongInt x = num1 * num2;
+	LongInt s = x * k;
+	s = modR(s, r);
+	LongInt t = x + s * N;
+	LongInt u = t / r;
+
+	return LongModInt(u,number1.getField());
+}
+
+LongModInt pow(const LongModInt& number1, const LongModInt& number2) {
+	
+	LongModInt result(LongInt("1"), number1.getField()), temp = number1;
+
+	if (number1.getField()->mod != number2.getField()->mod)
+		throw std::invalid_argument("Moduli must be equal.");
+
+	int breakpoint = 0,explength=0,rlength=number1.getField()->mod.getSize();
+
+	std::vector<binary>number2bin = exponent(number2, breakpoint, explength);
+
+	
+	if (!isCoprime(number1)) {
+		for (int i(explength - 1); i >= breakpoint; i--) {
+			if (number2bin[i].bit) result = result * temp;
+			temp = temp * temp;
+		}
+	}
+	else {
+
+		std::string r_str; r_str.resize(rlength + 1);
+		for (int i(1); i < rlength + 1; i++) r_str[i] = '0'; r_str[0] = '1';
+		LongInt r(r_str);
+		LongInt N = number1.getField()->mod;
+		LongInt one("1");
+		LongInt k = (r * inverse(r, number1) - one)/N;
+		LongModInt montres = mont(result,r),monttemp=mont(number1,r);
+		for (int i(explength - 1); i >= breakpoint; i--) {
+			if (number2bin[i].bit) montres = montgomeryMltpl(montres,monttemp,r,k,N);
+			monttemp = montgomeryMltpl(monttemp, monttemp, r, k, N);
+		}
+		
+		LongModInt R = LongModInt(r,number1.getField());
+		result = montres * (~R);
+	}
+
+	return result;
+}
+
+
+//////////////////////////
+
+
+LongModInt determineGroupElementOrder(MultiplicativeGroupModN* const group, LongModInt groupElement) {
+	// FIX IT: LNK every time try to getOrder()
+	// LongModInt t = group->getOrder();
+	LongModInt t = groupElement;
+	LongModInt neutralElement("1", t.getField());
+	LongModInt a;
+
+	std::vector<FactorizationStruct> primeFactorization = naiveFactorization(t);
+	int factorizationLength = primeFactorization.size();
+	
+	for (int i = 0; i < factorizationLength; i++) {
+		t = t / pow(primeFactorization[i].factor, primeFactorization[i].power);
+		a = pow(groupElement, t);
+		while (a != neutralElement) {
+			a = pow(a, primeFactorization[i].factor);
+			t = t * primeFactorization[i].factor;
+		}
+	}
+
+	return t;
+}
 
 
 
@@ -137,26 +264,4 @@ void eulerCarmichaelTest(){ // test case for above program
 	else std::cout << "Number is not Charmichael" << std::endl;
 	if(isCarmichaelNumber(2000) && !is_prime(2000)) std::cout << "2000 is Charmichael number" << std::endl;
 	else std::cout << "Number is not Charmichael" << std::endl;
-}
-
-LongModInt determineGroupElementOrder(MultiplicativeGroupModN* const group, LongModInt groupElement) {
-	// FIX IT: LNK every time try to getOrder()
-	// LongModInt t = group->getOrder();
-	LongModInt t = groupElement;
-	LongModInt neutralElement("1", t.getField());
-	LongModInt a;
-
-	std::vector<FactorizationStruct> primeFactorization = naiveFactorization(t);
-	int factorizationLength = primeFactorization.size();
-	
-	for (int i = 0; i < factorizationLength; i++) {
-		t = t / pow(primeFactorization[i].factor, primeFactorization[i].power);
-		a = pow(groupElement, t);
-		while (a != neutralElement) {
-			a = pow(a, primeFactorization[i].factor);
-			t = t * primeFactorization[i].factor;
-		}
-	}
-
-	return t;
 }
