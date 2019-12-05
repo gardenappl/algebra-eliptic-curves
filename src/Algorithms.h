@@ -41,3 +41,6 @@ int pointOrderTest();
 
 vector<LongInt> get_generator(LongInt n, vector<LongInt> prime_factorization);
 void getGeneratorTest();
+
+LongInt mod_sqrt(const LongInt& a, const LongInt& p);
+void sqrtTest();

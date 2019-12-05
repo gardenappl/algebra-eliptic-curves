@@ -81,6 +81,7 @@ int main()
 	MultiplicativeGroupModN g(&f2);
 	cout << g << endl;
 
+	sqrtTest();
 	getGeneratorTest();
 	cout << endl << endl;
 	pointOrderTest();

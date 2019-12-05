@@ -476,3 +476,121 @@ void getGeneratorTest()
 	prime_factorization.push_back(n);
 	for (auto generator : get_generator(n, prime_factorization))cout << generator << ' ';
 }
+
+/*!
+ * Find square root in modular arithmetic
+ * @author Іоффе Андрій
+ */
+
+LongInt mod_pow(const LongInt& a, const LongInt& b,
+                const LongInt& p) {
+	ModField field(p);
+	LongModInt ma(a, &field);
+	LongModInt mb(b, &field);
+	return pow(ma, mb).getNum();
+}
+
+LongInt legendre(const LongInt& a, const LongInt& p) {
+	LongInt ret = mod_pow(a, (p - 1) / 2, p);
+	if (ret == p - 1) {
+		return LongInt(-1);
+	} else {
+		return ret;
+	}
+}
+
+LongInt mod_sqrt(const LongInt& a, const LongInt& p) {
+	ModField field(4);
+	// field by which we will calculate some modules
+
+	// check value of legendre
+	// by algorithm
+	LongInt ls = legendre(a, p);
+	if (ls != 1) {
+		if (ls == -1) {
+			cout << endl;
+			cout << "a doesnt have a square root modulo p";
+			cout << endl;
+		}
+		return 0;
+	} else if (a == 0) {
+		return 0;
+	} else if (p == 2) {
+		return p;
+	} else if (LongModInt(p, &field).getNum() == 3) {
+		// if p % 4 = 3 --  by algorithm
+		return mod_pow(a, (p + 1) / 4, p);
+	}
+
+	// by algorithm
+	LongInt b = 2;
+	while (legendre(b, p) != -1) {
+		b = b + 1;
+	}
+
+	// by algorithm
+	LongInt t = p - 1;
+	// by algorithm
+	LongInt s = 0;
+
+	field = ModField(2);
+	// by algorithm
+	while (LongModInt(t, &field).getNum() == 0) {
+		t = t / 2;
+		s = s + 1;
+	}
+
+	// renew field
+	field = ModField(p);
+
+	// by algorithm
+	LongModInt a1 = ~LongModInt(a, &field);
+	// by algorithm
+	LongModInt c(mod_pow(b, t, p), &field);
+	// by algorithm
+	LongModInt r(mod_pow(a, (t + 1) / 2, p), &field);
+
+	// border  of for
+	LongInt u = s - 1;
+	for (LongInt i = 1; i <= u; i = i + 1) {
+		// transfering long int to regular int
+		// (sure that it fits in)
+		int rm = (s - i).getNumber()[0];
+		// по алгоритму
+		LongModInt d(
+				mod_pow(
+						LongModInt(r * r * a1).getNum(),
+						// == 2^(rm - 1) == 2^(s - i - 1)
+						1 << (rm - 1),
+						p
+				),
+				&field
+		);
+
+		if (d == LongModInt(-1, &field)) {
+			r = r * c;
+		}
+
+		c = c * c;
+	}
+
+	return r.getNum();
+}
+
+void sqrtTest() {
+	cout << "hello world" << endl;
+
+	string sn;
+	cout << "enter number: ";
+	cin >> sn;
+
+	string sp;
+	cout << "enter p: "; // enter p for mod_sqrt(n,p)
+	cin >> sp;
+
+	LongInt n = sn; // number
+	LongInt p = sp; // mod
+
+	cout << endl;
+	cout << "sqrt: " << mod_sqrt(n, p) << endl;
+}
