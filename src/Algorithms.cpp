@@ -311,7 +311,7 @@ LongInt inverse(LongInt a, LongInt m)
 	for (int x = 1; x < m; x++)
 		if ((a*x) % m == 1)
 			return x;
-}
+} 
 
 vector<LongInt> f(vector<LongInt> xab, LongInt g, LongInt t, LongInt p) {
 	LongInt x = xab[0];
@@ -361,15 +361,22 @@ void pollardDiscreteLogTest() {
 	ModField f1(383);
 	LongModInt a1(2, &f1);
 	LongModInt b1(228, &f1);
-	cout << (discreteLog_pollard(a1, b1) == LongModInt(110, &f1)) << endl; // log(2,228) = 110 mod 383
+	cout << "log(2,228) = x mod 383 --> x = 110" << endl << "Checking: ";
+	cout << (discreteLog_pollard(a1, b1) == LongModInt(110, &f1)) << " - true " << endl; // log(2,228) = 110 mod 383
+
+	cout << "=============" << endl;
 	ModField f2(1019);
 	LongModInt a2(2, &f2);
 	LongModInt b2(5, &f2);
-	cout << (discreteLog_pollard(a2, b2) == LongModInt(10, &f2)) << endl; // log(2,5) = 10 mod 1019
+	cout << "log(2,5) = x mod 1019 --> x = 10" << endl << "Checking: ";
+	cout << (discreteLog_pollard(a2, b2) == LongModInt(10, &f2)) << " - true " << endl; // log(2,5) = 10 mod 1019
+	cout << "=============" << endl;
+
 	ModField f3(997);
 	LongModInt a3(83, &f3);
 	LongModInt b3(555, &f3);
-	cout << (discreteLog_pollard(a3, b3) == LongModInt(129, &f3)) << endl; // log(83,555) = 129 mod 997
+	cout << "log(83,555) = x mod 997 --> x = 129" << endl << "Checking: ";
+	cout << (discreteLog_pollard(a3, b3) == LongModInt(129, &f3)) << " - true " << endl; // log(83,555) = 129 mod 997
 }
 
 
