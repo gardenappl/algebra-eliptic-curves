@@ -38,3 +38,6 @@ int discreteLogBSGSTest();
 
 int order(const EllipticCurve& curve, const Point& p);
 int pointOrderTest();
+
+vector<LongInt> get_generator(LongInt n, vector<LongInt> prime_factorization);
+void getGeneratorTest();

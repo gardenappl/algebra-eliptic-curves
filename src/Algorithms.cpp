@@ -436,3 +436,43 @@ int pointOrderTest() {
 
 	return 0;
 }
+
+#include <iostream>
+#include <cmath>
+#include "ModArithmetic.h"
+#include "EllipticCurve.h"
+#include "Algorithms.h"
+#include "MultiplicativeGroupModN.h"
+
+using namespace std;
+
+/*!
+ * Get generators of a group.
+ * @author Шеремет Іван
+ */
+
+
+vector<LongInt> get_generator(LongInt n, vector<LongInt> prime_factorization) {
+	vector<LongInt> res;//Змінна для результату
+	LongInt one("1");//Змінна константа 1
+	LongInt i("0");//Змінна для циклу
+
+	ModField f(n);
+	for (bool flag = true; i < n; i = i + one)//Поки i<n
+	{
+		for (size_t j = 0; j < prime_factorization.size(); j++)//Перебираемо усі прості дільники
+			if (pow(LongModInt(i, &f), LongModInt(n / prime_factorization[j], &f)).getNum() == one)flag = false;//Якщо і^(n/p)==1 то і не генератор
+		if (flag)res.push_back(i);//Якщо і генератор то і потрапить у результат
+		flag = true;
+	}
+	return res;
+}
+
+
+void getGeneratorTest()
+{
+	LongInt n("11");
+	vector<LongInt> prime_factorization;
+	prime_factorization.push_back(n);
+	for (auto generator : get_generator(n, prime_factorization))cout << generator << ' ';
+}
