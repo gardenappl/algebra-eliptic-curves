@@ -2,8 +2,10 @@
 #include<vector>
 #include<string>
 #include <map>
+#include <memory>
 #include"Algorithms.h"
 #include "LongInt.h"
+#include "EllipticCurve.h"
 
 using namespace std;
 
@@ -20,6 +22,13 @@ std::vector<FactorizationStruct> naiveFactorization(LongModInt) {
 	std::vector<FactorizationStruct> result{};
 	return result;
 }
+
+/*!
+ * Montgomery modular multiplication
+ * @author Мазур Дарина, Монтаг Марина
+ */
+
+
 
 std::vector<binary> exponent(LongModInt number,int&breakpoint,int&length) {
 
@@ -166,7 +175,10 @@ LongModInt pow(const LongModInt& number1, const LongModInt& number2) {
 }
 
 
-//////////////////////////
+/*!
+ * Determine the order of an element of multiplicative group mod N.
+ * @author Краснопір Тимур
+ */
 
 
 LongModInt determineGroupElementOrder(MultiplicativeGroupModN* const group, const LongModInt& groupElement) {
@@ -350,5 +362,77 @@ int discreteLogBSGSTest()
 	LongModInt a(2, &f);
 	LongModInt b(3, &f);
 	cout << discreteLogarithmBS(a, b) << endl;
+	return 0;
+}
+
+
+
+/*!
+ * Determine order of a point on elliptic curve.
+ * @author Пилипенко Павло
+ */
+
+
+int order(const EllipticCurve& curve, const Point& p) {
+	int k = 1;
+	// текущая точка = сумма k точек P (или k * P)
+	// (изначально = P, т.к. k = 1)
+	Point current = p;
+	// пока текущая точка не ушла в бесконечность
+	while (!current.isInfinite()) {
+		// добавляем к ней точку P
+		current = curve.add(current, p);
+		k++;
+	}
+	// точка ушла в бесконечность,
+	// возвращаем сколько раз мы её добавили
+	return k;
+}
+
+int pointOrderTest() {
+
+	cout << "elliptic curve E(Fp): ";
+	cout << "y^2 = x^3 + Ax + B, p prime" << endl;
+
+	string p;
+	cout << "enter p: ";
+	cin >> p;
+
+	string a;
+	cout << "enter A: ";
+	cin >> a;
+
+	cout << endl;
+	cout << "point P(x, y)" << endl;
+
+	string x;
+	cout << "enter x: ";
+	cin >> x;
+
+	string y;
+	cout << "enter y: ";
+	cin >> y;
+
+	// переводим строки в объекты чисел
+	unique_ptr<ModField> field(new ModField(p));
+	LongModInt ma(a, field.get());
+	LongModInt mx(x, field.get());
+	LongModInt my(y, field.get());
+
+	// находим такое B, при котором точка будет лежать на кривой
+	// B = y^2 - x^3 - Ax
+	LongModInt mb = my * my - mx * mx * mx - ma * mx;
+
+	EllipticCurve curve(ma.getNum(), mb.getNum(), field.get());
+	Point P(mx, my);
+
+	// выводим B
+	cout << endl;
+	cout << "B = " << mb << endl;
+
+	// выводим порядок точки P на кривой curve
+	cout << endl;
+	cout << "ord(P) = " << order(curve, P) << endl;
+
 	return 0;
 }

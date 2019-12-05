@@ -81,4 +81,5 @@ int main()
 	MultiplicativeGroupModN g(&f2);
 	cout << g << endl;
 
+	pointOrderTest();
 }

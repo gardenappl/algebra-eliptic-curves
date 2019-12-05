@@ -1,6 +1,7 @@
 #pragma once
 #include"ModArithmetic.h"
 #include "MultiplicativeGroupModN.h"
+#include "EllipticCurve.h"
 
 struct FactorizationStruct {
 	LongModInt factor;
@@ -35,3 +36,5 @@ int euler(int n);
 LongModInt discreteLogarithmBS(const LongModInt& a, const LongModInt& b);
 int discreteLogBSGSTest();
 
+int order(const EllipticCurve& curve, const Point& p);
+int pointOrderTest();

@@ -20,8 +20,9 @@ bool MultiplicativeGroupModN::isGroupElement(const LongModInt& element) {
 
 	//binary search
 	auto found = std::lower_bound(elements.begin(), elements.end(), element);
-	if(found != elements.end() && *found != element)
+	if(found != elements.end() || *found != element)
 		return false;
+	return true;
 }
 
 LongModInt MultiplicativeGroupModN::getOrder() {
