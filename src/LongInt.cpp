@@ -378,3 +378,8 @@ int LongInt::getSize() const
 {
 	return x.size();
 }
+
+std::vector<int> LongInt::getNumber() const
+{
+	return x;
+}
