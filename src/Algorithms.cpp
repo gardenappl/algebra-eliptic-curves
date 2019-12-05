@@ -1,12 +1,19 @@
 #include <iostream>
 #include<vector>
 #include<string>
+#include <map>
 #include"Algorithms.h"
+#include "LongInt.h"
 
-struct FactorizationStruct {
-	LongModInt factor;
-	LongModInt power;
-};
+using namespace std;
+
+
+LongInt gcd(const LongInt& num1, const LongInt& num2)
+{
+	LongInt x, y;
+	return LongInt::gcdExtended(num1, num2, x, y);
+}
+
 
 std::vector<FactorizationStruct> naiveFactorization(LongModInt) {
 	// TODO
@@ -162,16 +169,17 @@ LongModInt pow(const LongModInt& number1, const LongModInt& number2) {
 //////////////////////////
 
 
-LongModInt determineGroupElementOrder(MultiplicativeGroupModN* const group, LongModInt groupElement) {
-	// FIX IT: LNK every time try to getOrder()
-	// LongModInt t = group->getOrder();
-	LongModInt t = groupElement;
+LongModInt determineGroupElementOrder(MultiplicativeGroupModN* const group, const LongModInt& groupElement) {
+	if(!group->isGroupElement(groupElement))
+		throw std::invalid_argument("Element does not belong to group!");
+
+	LongModInt t = group->getOrder();
 	LongModInt neutralElement("1", t.getField());
 	LongModInt a;
 
 	std::vector<FactorizationStruct> primeFactorization = naiveFactorization(t);
 	int factorizationLength = primeFactorization.size();
-	
+
 	for (int i = 0; i < factorizationLength; i++) {
 		t = t / pow(primeFactorization[i].factor, primeFactorization[i].power);
 		a = pow(groupElement, t);
@@ -186,7 +194,10 @@ LongModInt determineGroupElementOrder(MultiplicativeGroupModN* const group, Long
 
 
 
-//////////////////////////
+/*!
+ * Euler function and Carmichael function
+ * @author Мікуш Павло
+ */
 
 
 
@@ -264,4 +275,80 @@ void eulerCarmichaelTest(){ // test case for above program
 	else std::cout << "Number is not Charmichael" << std::endl;
 	if(isCarmichaelNumber(2000) && !is_prime(2000)) std::cout << "2000 is Charmichael number" << std::endl;
 	else std::cout << "Number is not Charmichael" << std::endl;
+}
+
+
+
+/*!
+ * Discrete logarithm: Baby-step giant-step
+ * @author Самокрик Владислав
+ */
+
+
+LongInt power(const LongInt& x, const LongInt& y, const LongInt& mod) { // recursive function that returns special power using mod
+	if (y == 0)
+		return 1;
+	LongInt temp = power(x, y / 2, mod) % mod;
+	temp = (temp * temp) % mod;
+	if (y % 2 == 1)
+		temp = (temp * x) % mod;
+	return temp;
+}
+
+
+LongInt sqrt(const LongInt& a) {
+	LongInt x0 = a, x1 = (a + 1) / 2;
+	while (x1 < x0) {
+		x0 = x1;
+		x1 = (x1 + a / x1) / 2;
+	}
+	return x0;
+}
+
+// Function to calculate k for given a, b, m
+LongInt discreteLogarithm(const LongInt& a, const LongInt& b, const LongInt& m) {
+
+	LongInt n = LongInt(sqrt(m) + 1);
+
+	map<LongInt, LongInt> value;
+
+	// Store all values of a^(n*i) of LHS
+	for (LongInt i = n; i >= 1; ) {
+		i = i - 1;
+		value[power(a, i * n, m)] = i;
+	}
+
+	for (LongInt j = 0; j < n;)
+	{
+		// Calculate (a ^ j) * b and check
+		// for collision
+		LongInt cur = (power(a, j, m) * b) % m;
+
+		// If collision occurs i.e., LHS = RHS
+		if (value[cur] != 0)
+		{
+			LongInt ans = value[cur] * n - j;
+			// Check whether ans lies below m or not
+			if (ans < m)
+				return ans;
+		}
+		j = j + 1;
+	}
+	return -1;
+}
+
+LongModInt discreteLogarithmBS(const LongModInt& a, const LongModInt& b) {
+	LongInt res = discreteLogarithm(a.getNum(), b.getNum(), a.getField()->mod);
+	return LongModInt(res, a.getField());
+
+}
+
+// Driver code
+int discreteLogBSGSTest()
+{
+	ModField f(5);
+	LongModInt a(2, &f);
+	LongModInt b(3, &f);
+	cout << discreteLogarithmBS(a, b) << endl;
+	return 0;
 }

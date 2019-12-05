@@ -1,26 +1,43 @@
 #include "MultiplicativeGroupModN.h"
+#include "Algorithms.h"
+#include "LongInt.h"
+#include <algorithm>
 
-MultiplicativeGroupModN::MultiplicativeGroupModN(int modulo) {
-	if (modulo <= 0) {
-		throw std::invalid_argument("The modulo can not be <= 0.");
-	}
-	ModField n(std::to_string(modulo));
-	for (int i = 1; i < modulo; i++) {
-		if (gcd(i, modulo) == 1) {
-			elements.emplace_back(new LongModInt(std::to_string(i), &n));
+
+MultiplicativeGroupModN::MultiplicativeGroupModN(ModField* f)
+{
+	for (LongInt i(1); i < f->mod; i = i+1) {
+		if (gcd(i, f->mod) == 1) {
+			elements.emplace_back(LongModInt(i, f));
 		}
 	}
-	order = new LongModInt(std::to_string(elements.size()), &n);
+	order = LongModInt(LongInt(elements.size()), f);
+}
+
+bool MultiplicativeGroupModN::isGroupElement(const LongModInt& element) {
+	if(element.getField()->mod != order.getField()->mod)
+		return false;
+
+	//binary search
+	auto found = std::lower_bound(elements.begin(), elements.end(), element);
+	if(found != elements.end() && *found != element)
+		return false;
 }
 
 LongModInt MultiplicativeGroupModN::getOrder() {
-	return *order;
+	return order;
 }
 
 std::ostream& operator<<(std::ostream& stream, const MultiplicativeGroupModN& group)
 {
-	for (LongModInt* element : group.elements) {
-		cout << *element;
+	std::cout << "{ ";
+	bool first = true;
+	for (LongModInt element : group.elements) {
+		if(!first)
+			std::cout << ", ";
+		std::cout << element;
+		first = false;
 	}
+	std::cout << " }";
 	return stream;
 }

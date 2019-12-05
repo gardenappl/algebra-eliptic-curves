@@ -2,10 +2,18 @@
 #include"ModArithmetic.h"
 #include "MultiplicativeGroupModN.h"
 
+struct FactorizationStruct {
+	LongModInt factor;
+	LongModInt power;
+};
+
 struct binary {
 	LongModInt order;
 	int bit;
 };
+
+
+LongInt gcd(const LongInt& a, const LongInt& b);
 
 LongModInt pow(const LongModInt&, const LongModInt&);
 std::vector<binary> exponent(LongModInt number, int& breakpoint, int& length);
@@ -17,11 +25,13 @@ LongInt inverse(const LongInt& x, const LongModInt& number);
 LongInt modR(const LongInt& x, const LongInt& r);
 LongModInt montgomeryMltpl(const LongModInt& number1, const LongModInt& number2, const LongInt& r, const LongInt& k, const LongInt& N);
 
+LongModInt determineGroupElementOrder(MultiplicativeGroupModN* const group, const LongModInt& groupElement);
+
+int gcd(int a, int b);
 void eulerCarmichaelTest();
 bool isCarmichaelNumber(int n);
-int power(int x, int y, int mod);
-bool is_prime(int n);
-int gcd(int a, int b);
 int euler(int n);
 
+LongModInt discreteLogarithmBS(const LongModInt& a, const LongModInt& b);
+int discreteLogBSGSTest();
 

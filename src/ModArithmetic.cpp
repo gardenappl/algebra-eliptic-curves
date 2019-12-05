@@ -23,7 +23,7 @@ LongModInt::LongModInt(const LongInt &num, ModField *field)
 		this->num = num % field->mod;
 	}
 	else if (num.isNegative()) {
-		this->num = (field->mod - num) % field->mod;
+		this->num = (field->mod + num) % field->mod;
 	}
 	else
 		this->num = num;
@@ -205,4 +205,9 @@ ModField* LongModInt::getField() const
 std::vector<int> LongModInt::getNumber() const
 {
 	return this->num.getNumber();
+}
+
+LongInt LongModInt::getNum() const
+{
+	return num;
 }

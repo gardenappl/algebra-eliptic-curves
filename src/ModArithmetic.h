@@ -27,6 +27,7 @@ public:
 	LongModInt(const LongInt& num, ModField* field);
 	ModField* getField() const;
 	std::vector<int> getNumber() const;
+	LongInt getNum() const;
 
 	// ~x is x^-1
 	LongModInt operator ~() const;
