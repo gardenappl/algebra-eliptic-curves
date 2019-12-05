@@ -383,3 +383,8 @@ std::vector<int> LongInt::getNumber() const
 {
 	return x;
 }
+
+std::vector<int> LongInt::getX() const
+{
+  return x;
+}
