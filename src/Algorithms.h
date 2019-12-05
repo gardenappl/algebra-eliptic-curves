@@ -25,11 +25,18 @@ LongInt LongModInt_to_LongInt(const LongModInt& x);
 LongInt inverse(const LongInt& x, const LongModInt& number);
 LongInt modR(const LongInt& x, const LongInt& r);
 LongModInt montgomeryMltpl(const LongModInt& number1, const LongModInt& number2, const LongInt& r, const LongInt& k, const LongInt& N);
+LongInt mod(LongInt x, LongInt y);
+LongInt inverse(LongInt a, LongInt m);
+LongInt dlog(LongInt g, LongInt t, LongInt p);
+
+vector<LongInt> f(vector<LongInt> xab, LongInt g, LongInt t, LongInt p);
+LongModInt discreteLog_pollard(LongModInt g, LongModInt t);
 
 LongModInt determineGroupElementOrder(MultiplicativeGroupModN* const group, const LongModInt& groupElement);
 
 int gcd(int a, int b);
 void eulerCarmichaelTest();
+void pollardDiscreteLogTest();
 bool isCarmichaelNumber(int n);
 int euler(int n);
 

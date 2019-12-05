@@ -289,6 +289,88 @@ void eulerCarmichaelTest(){ // test case for above program
 	else std::cout << "Number is not Charmichael" << std::endl;
 }
 
+/*!
+ * Discrete logarithm by Pollard
+ * @author Fomin Dmitriy
+ */
+
+
+LongInt mod(LongInt x, LongInt y) {
+	if (x >= 0) return x % y;
+	else if (x < 0) {
+		while (x < (-y)) {
+			x = x + y;
+		}
+		return (y - (-x));
+	}
+}
+
+LongInt inverse(LongInt a, LongInt m)
+{
+	a = a % m;
+	for (int x = 1; x < m; x++)
+		if ((a*x) % m == 1)
+			return x;
+}
+
+vector<LongInt> f(vector<LongInt> xab, LongInt g, LongInt t, LongInt p) {
+	LongInt x = xab[0];
+	LongInt a = xab[1];
+	LongInt b = xab[2];
+	if (x < p / 3)
+		return { (t*x) % p, (a + 1) % (p - 1), b };
+	if (p * 2 / 3 < x) return { (g*x) % p, a, (b + 1) % (p - 1) };
+	return { (x*x) % p, (a * 2) % (p - 1), (b * 2) % (p - 1) };
+}
+
+LongInt dlog(LongInt g, LongInt t, LongInt p) {
+	// l such that g**l == t (mod p), with p prime
+	// algorithm due to Crandall/Pomerance "Prime Numbers" sec 5.2.2
+	LongInt i = 1;
+	vector<LongInt> x_i = { 1,0,0 };
+	vector<LongInt> x_2i = f(x_i, g, t, p);
+	while (x_i[0] != x_2i[0]) {
+		//cout << i << " " << x_i[0] << " " << x_i[1] << " " << x_i[2]
+		//	<< " " << x_2i[0] << " " << x_2i[1] << " " << x_2i[2] << endl;
+		i = i + 1;
+		x_i = f(x_i, g, t, p);
+		x_2i = f(x_2i, g, t, p);
+		x_2i = f(x_2i, g, t, p);
+	}
+	//cout << i << " " << x_i[0] << " " << x_i[1] << " " << x_i[2]
+	//	<< " " << x_2i[0] << " " << x_2i[1] << " " << x_2i[2] << endl;
+	LongInt d = gcd(x_i[1] - x_2i[1], p - 1);
+	if (d == 1) return mod((mod((x_2i[2] - x_i[2]), (p - 1)) * inverse(mod((x_i[1] - x_2i[1]), (p - 1)), p - 1)), (p - 1));
+	int m = 0;
+	LongInt l = mod((mod((x_2i[2] - x_i[2]), ((p - 1) / d)) * inverse(mod((x_i[1] - x_2i[1]), ((p - 1) / d)), (p - 1) / d)), ((p - 1) / d));
+	while (m <= d) {
+		//cout << m << " " << l << endl;
+		if (power(g, l, p) == t) return l;
+		m++;
+		l = mod((l + ((p - 1) / d)), (p - 1));
+	}
+	return -1;
+}
+
+LongModInt discreteLog_pollard(LongModInt g, LongModInt t) {
+	LongInt res = dlog(g.getNum(), t.getNum(), g.getField()->mod);
+	return LongModInt(res, g.getField());
+}
+
+void pollardDiscreteLogTest() {
+	ModField f1(383);
+	LongModInt a1(2, &f1);
+	LongModInt b1(228, &f1);
+	cout << (discreteLog_pollard(a1, b1) == LongModInt(110, &f1)) << endl; // log(2,228) = 110 mod 383
+	ModField f2(1019);
+	LongModInt a2(2, &f2);
+	LongModInt b2(5, &f2);
+	cout << (discreteLog_pollard(a2, b2) == LongModInt(10, &f2)) << endl; // log(2,5) = 10 mod 1019
+	ModField f3(997);
+	LongModInt a3(83, &f3);
+	LongModInt b3(555, &f3);
+	cout << (discreteLog_pollard(a3, b3) == LongModInt(129, &f3)) << endl; // log(83,555) = 129 mod 997
+}
 
 
 /*!
