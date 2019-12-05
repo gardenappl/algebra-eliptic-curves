@@ -44,3 +44,5 @@ void getGeneratorTest();
 
 LongInt mod_sqrt(const LongInt& a, const LongInt& p);
 void sqrtTest();
+
+std::vector<FactorizationStruct> naiveFactorization(LongModInt a);

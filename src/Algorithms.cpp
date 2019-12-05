@@ -17,12 +17,6 @@ LongInt gcd(const LongInt& num1, const LongInt& num2)
 }
 
 
-std::vector<FactorizationStruct> naiveFactorization(LongModInt) {
-	// TODO
-	std::vector<FactorizationStruct> result{};
-	return result;
-}
-
 /*!
  * Montgomery modular multiplication
  * @author Мазур Дарина, Монтаг Марина
@@ -593,4 +587,31 @@ void sqrtTest() {
 
 	cout << endl;
 	cout << "sqrt: " << mod_sqrt(n, p) << endl;
+}
+
+
+/*!
+ * Factoriation (naive)
+ * @author Григорович Олег
+ */
+
+
+std::vector<FactorizationStruct> naiveFactorization(LongModInt a)
+{
+	std::vector<FactorizationStruct> result;
+	for (LongModInt i=i+"2"; i < a; i=i+"1") {//that's magically optimized due to a being changed in body. pls dont touch
+		if (a.getNum() % i.getNum() == 0) {
+			FactorizationStruct temp;
+			temp.factor = i;
+			temp.power = LongModInt(1, a.getField());
+			a = a / i;
+			while (a.getNum() % i.getNum() == 0) {
+				temp.power = temp.power + LongModInt(1, a.getField());
+				a = a / i;
+			}
+			result.push_back(temp);
+
+		}
+	}
+	return result;
 }
