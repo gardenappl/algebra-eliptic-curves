@@ -75,6 +75,7 @@ int main()
 	cout << e.integerTimesPoint({ "1", "4" }, 13);
 
 	eulerCarmichaelTest();
+	pollardDiscreteLogTest();
 	discreteLogBSGSTest();
 
 	ModField f2(20);
